@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'SF Pro Display';
-  src: url('FontsFree-Net-SFProDisplay-RegularItalic.woff') format('woff');
+  src: url('https://enberggold.github.io/G-AI-_-Chat-/FontsFree-Net-SFProDisplay-RegularItalic.woff') format('woff');
   font-style: italic;
   font-weight: normal;
   font-display: swap;
@@ -870,109 +870,6 @@
     font-style: italic;
   }
   
-  /* Предпросмотр прикреплённых файлов */
-  .file-previews {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px 24px 0 24px;
-    max-height: 120px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(156, 0, 249, 0.8) rgba(31, 31, 31, 0.5);
-  }
-  
-  .file-previews::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  
-  .file-previews::-webkit-scrollbar-track {
-    background: rgba(31, 31, 31, 0.5);
-    border-radius: 3px;
-  }
-  
-  .file-previews::-webkit-scrollbar-thumb {
-    background: rgba(156, 0, 249, 0.8);
-    border-radius: 3px;
-  }
-  
-  .file-preview {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(31, 31, 31, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 8px;
-    min-width: 120px;
-    max-width: 200px;
-    position: relative;
-  }
-  
-  .file-preview-icon {
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    border-radius: 4px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-  }
-  
-  .file-preview-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .file-preview-info {
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-  }
-  
-  .file-preview-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #FFFFFF;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 2px;
-  }
-  
-  .file-preview-size {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.6);
-  }
-  
-  .file-preview-remove {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: rgba(255, 105, 0, 0.2);
-    border: none;
-    color: #ff6900;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.2s ease;
-  }
-  
-  .file-preview-remove:hover {
-    background: rgba(255, 105, 0, 0.4);
-    transform: scale(1.1);
-  }
-  
-  .file-preview-remove svg {
-    width: 12px;
-    height: 12px;
-  }
   
   #message-input {
     padding: 10px;
@@ -1140,9 +1037,8 @@
 .forward-option {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
   border: none;
-  background: white;
+  background: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1154,10 +1050,10 @@
   transform: scale(1.1);
 }
 
-.forward-option svg {
-  width: 24px;
-  height: 24px;
-  color: #333;
+.forward-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Мобильная версия - меньшие отступы */
