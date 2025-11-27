@@ -556,7 +556,7 @@
 .buttons-container {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 10px;
   margin: 8px 16px 8px 3px;
   flex-shrink: 0;
   min-width: min-content;
