@@ -333,6 +333,7 @@ class DeepSeekChat {
     const fileSize = this.formatFileSize(file.size);
     const fileIcon = this.getFileIcon(file.type);
     const isImage = file.type.startsWith('image/');
+    const fileExtension = file.name.split('.').pop().toUpperCase();
 
     let iconHtml = '';
     if (isImage) {
@@ -354,6 +355,7 @@ class DeepSeekChat {
         ${iconHtml}
       </div>
       <div class="file-preview-info">
+        <span class="file-preview-format">${fileExtension}</span>
         <div class="file-preview-name">${this.escapeHtml(file.name)}</div>
         <div class="file-preview-size">${fileSize}</div>
       </div>
@@ -680,7 +682,9 @@ class DeepSeekChat {
     console.log('attachedFiles length:', this.attachedFiles.length);
     console.log('isProcessing:', this.isProcessing);
 
-    const shouldDisable = (!messageInput.value.trim() && this.attachedFiles.length === 0) || this.isProcessing;
+    // Кнопка активна, если есть текст ИЛИ файлы, и не обрабатывается
+    const hasContent = messageInput.value.trim().length > 0 || this.attachedFiles.length > 0;
+    const shouldDisable = !hasContent || this.isProcessing;
     sendButton.disabled = shouldDisable;
 
     // Добавляем отладочный вывод для состояния кнопки
@@ -1760,17 +1764,26 @@ class DeepSeekChat {
     console.log('attachedFiles:', this.attachedFiles.length);
     console.log('isProcessing:', this.isProcessing);
 
-    if ((!message && this.attachedFiles.length === 0) || this.isProcessing) {
-      console.log('No content or processing, returning');
+    if (this.isProcessing) {
+      console.log('Processing, returning');
+      return;
+    }
+
+    // Разрешаем отправку если есть сообщение ИЛИ файлы
+    const hasContent = message.length > 0 || this.attachedFiles.length > 0;
+    if (!hasContent) {
+      console.log('No content, returning');
       return;
     }
 
     // Сохраняем файлы для отправки
     const filesToSend = [...this.attachedFiles];
 
-    // Добавляем файлы в чат
-    for (const file of this.attachedFiles) {
-      this.addFileMessage(file, '');
+    // Добавляем файлы в чат, если они есть
+    if (this.attachedFiles.length > 0) {
+      for (const file of this.attachedFiles) {
+        this.addFileMessage(file, '');
+      }
     }
 
     // Добавляем текстовое сообщение, если есть
@@ -1796,11 +1809,13 @@ class DeepSeekChat {
     try {
       let response = '';
 
+      // Отправляем файлы, если они есть
       if (filesToSend.length > 0) {
         console.log('Sending files to webhook');
         response = await this.sendFileToWebhook(filesToSend);
       }
 
+      // Отправляем сообщение, если оно есть
       if (message) {
         console.log('Sending message to webhook');
         response = await this.sendToWebhook(message);
@@ -1808,7 +1823,12 @@ class DeepSeekChat {
 
       console.log('Received response from webhook:', response);
       this.hideTypingIndicator();
-      this.addMessage(response, 'ai');
+
+      // Добавляем ответ AI только если был отправлен контент
+      if (response) {
+        this.addMessage(response, 'ai');
+      }
+
       this.scrollToBottom();
     } catch (error) {
       console.log('Error in sendMessage:', error);
