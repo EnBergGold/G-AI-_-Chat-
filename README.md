@@ -1,2 +1,2 @@
-# G-AI-_-Chat-
+# G-AI_Chat
 G•AI® _ Chat 
