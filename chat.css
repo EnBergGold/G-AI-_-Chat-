@@ -844,6 +844,7 @@
     min-width: 40px;
     min-height: 40px;
   }
+}
 
 /* Дополнительные стили для очень маленьких экранов */
 @media (max-width: 480px) {
@@ -1144,7 +1145,8 @@
   align-items: center;
   gap: 12px;
   position: relative;
-  min-height: 48px;
+  height: 48px;
+  box-sizing: border-box;
 }
 
 .file-preview-icon {
@@ -1207,8 +1209,7 @@
 .file-preview-remove {
   width: 24px;
   height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 105, 0, 0.2);
+  background: transparent;
   border: none;
   color: #ff6900;
   cursor: pointer;
@@ -1221,7 +1222,7 @@
 }
 
 .file-preview-remove:hover {
-  background: rgba(255, 105, 0, 0.4);
+  color: #e55a00;
   transform: scale(1.1);
 }
 
