@@ -829,6 +829,7 @@
     flex-shrink: 0;
     min-width: min-content;
     align-items: center;
+    gap: 13px;
   }
 
   .attach-button {
