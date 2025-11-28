@@ -1812,6 +1812,7 @@ class DeepSeekChat {
     messageInput.value = '';
     this.adjustTextareaHeight();
     this.clearAttachedFiles();
+    this.updateSendButton();
 
     if (this.isMobile) {
       setTimeout(() => {
