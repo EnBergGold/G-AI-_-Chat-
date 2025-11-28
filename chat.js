@@ -428,7 +428,7 @@ class DeepSeekChat {
     const is3DModel = ['stl', 'usdz'].includes(fileExtension.toLowerCase());
 
     // Определяем, поддерживается ли файл для копирования в буфер обмена
-    const isCopyable = (isImage || file.type === 'text/plain' || file.type === 'text/html') && this.clipboardSupported;
+    const isCopyable = (file.type === 'image/png' || file.type === 'text/plain' || file.type === 'text/html') && this.clipboardSupported;
 
     messageDiv.innerHTML = `
       <div class="avatar">
