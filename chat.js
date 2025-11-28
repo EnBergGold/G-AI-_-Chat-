@@ -509,6 +509,13 @@ class DeepSeekChat {
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
+      </button>
+      <button class="message-forward-btn" data-message-id="${messageId}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+          <polyline points="16 6 12 2 8 6"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
       </button>` : ''}
     `;
 
@@ -563,6 +570,46 @@ class DeepSeekChat {
           setTimeout(() => {
             messageCopyBtn.style.opacity = '0';
             messageCopyBtn.style.visibility = 'hidden';
+          }, 2000);
+        }
+      });
+    }
+
+    // Обработчик для кнопки пересылки файла
+    const messageForwardBtn = messageDiv.querySelector('.message-forward-btn');
+    if (messageForwardBtn) {
+      const messageContent = messageDiv.querySelector('.message-content');
+      if (messageContent) {
+        const isUser = true; // Файлы всегда от пользователя
+        const contentRect = messageContent.getBoundingClientRect();
+        const messageRect = messageDiv.getBoundingClientRect();
+        const top = contentRect.top - messageRect.top + 10;
+        if (isUser) {
+          // Для пользовательских сообщений - слева от контента
+          const leftPos = (contentRect.left - messageRect.left - 34) + 'px';
+          messageForwardBtn.style.left = leftPos;
+          messageForwardBtn.style.right = 'auto';
+          messageForwardBtn.style.top = (top + 32) + 'px'; // ниже на 32px
+          messageForwardBtn.style.transform = 'none';
+        }
+
+        // Для мобильной версии - показывать кнопки по тапу на сообщение
+        if (this.isMobile) {
+          messageContent.addEventListener('click', () => {
+            messageForwardBtn.style.opacity = '1';
+            messageForwardBtn.style.visibility = 'visible';
+          });
+        }
+      }
+
+      messageForwardBtn.addEventListener('click', () => {
+        // Для пересылки файлов используем base64 данные
+        this.showForwardPopup(base64Data);
+        // Для мобильной версии - скрыть кнопки после использования
+        if (this.isMobile) {
+          setTimeout(() => {
+            messageForwardBtn.style.opacity = '0';
+            messageForwardBtn.style.visibility = 'hidden';
           }, 2000);
         }
       });
@@ -704,6 +751,13 @@ class DeepSeekChat {
                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
               </svg>
               Копировать
+            </button>
+            <button class="message-forward-btn" data-message-id="${messageId}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                <polyline points="16 6 12 2 8 6"/>
+                <line x1="12" y1="2" x2="12" y2="15"/>
+              </svg>
             </button>
           </div>
           <div class="message-text">
