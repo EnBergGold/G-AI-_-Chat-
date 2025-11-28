@@ -398,10 +398,12 @@ class DeepSeekChat {
 
 
   addFileMessage(file) {
+    console.log('addFileMessage called for file:', file.name, 'type:', file.type, 'size:', file.size);
     // Конвертируем файл в base64
     const reader = new FileReader();
 
     reader.onload = (e) => {
+      console.log('FileReader onload for', file.name, 'base64Data length:', e.target.result.length);
       const base64Data = e.target.result;
     const messagesContainer = document.getElementById('messages-container');
     const messageDiv = document.createElement('div');
@@ -576,6 +578,7 @@ class DeepSeekChat {
 
     if (messageCopyBtn) {
       messageCopyBtn.addEventListener('click', () => {
+        console.log('Copy button clicked for file:', file.name);
         // Копируем файл в буфер обмена вместо текста названия
         this.copyFileToClipboard(messageCopyBtn, base64Data, file.name);
         // Для мобильной версии - скрыть кнопки после использования
