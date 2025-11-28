@@ -958,6 +958,13 @@
   color: #ff5500;
 }
 
+.message-copy-btn:active,
+.message-forward-btn:active {
+  background: transparent !important;
+  transform: none !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
 .message-copy-btn svg,
 .message-forward-btn svg {
   width: 16px;
