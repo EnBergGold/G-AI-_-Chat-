@@ -1654,6 +1654,8 @@ class DeepSeekChat {
       // Для изображений сначала пробуем с оригинальным форматом
       if (mimeType.startsWith('image/')) {
         console.log('Trying to copy image with original format:', mimeType);
+        console.log('ClipboardItem available:', typeof ClipboardItem);
+        console.log('ClipboardItem.supports available:', typeof ClipboardItem !== 'undefined' && ClipboardItem.supports);
         // Конвертируем base64 в Uint8Array
         const byteCharacters = atob(base64String);
         const byteNumbers = new Array(byteCharacters.length);
@@ -1663,8 +1665,8 @@ class DeepSeekChat {
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: mimeType });
 
-        this.copyBlobToClipboard(button, blob, mimeType, base64Data).catch(() => {
-          console.log('Original format failed, converting to PNG');
+        this.copyBlobToClipboard(button, blob, mimeType, base64Data).catch((err) => {
+          console.log('Original format failed:', err.message, 'converting to PNG');
           // Если не удалось, конвертируем в PNG
           this.convertImageToPngBlob(base64Data).then(pngBlob => {
             console.log('PNG blob created, size:', pngBlob.size);
@@ -1751,9 +1753,11 @@ class DeepSeekChat {
   }
 
   copyBlobToClipboard(button, blob, mimeType, base64Data) {
+    console.log('copyBlobToClipboard called with mimeType:', mimeType, 'blob size:', blob.size);
     return new Promise((resolve, reject) => {
       // Проверяем поддержку ClipboardItem
       if (typeof ClipboardItem === 'undefined') {
+        console.error('ClipboardItem not supported');
         reject(new Error('ClipboardItem not supported'));
         return;
       }
