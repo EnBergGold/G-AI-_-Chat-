@@ -527,10 +527,9 @@ class DeepSeekChat {
       });
     }
 
-    // Обработчики для кнопок копирования и пересылки сообщения
+    // Обработчики для кнопок копирования
     const messageCopyBtn = messageDiv.querySelector('.message-copy-btn');
-    const messageForwardBtn = messageDiv.querySelector('.message-forward-btn');
-    if (messageCopyBtn || messageForwardBtn) {
+    if (messageCopyBtn) {
       const messageContent = messageDiv.querySelector('.message-content');
       if (messageContent) {
         const isUser = true; // Файлы всегда от пользователя
@@ -540,37 +539,21 @@ class DeepSeekChat {
         if (isUser) {
           // Для пользовательских сообщений - слева от контента
           const leftPos = (contentRect.left - messageRect.left - 34) + 'px';
-          if (messageCopyBtn) {
-            messageCopyBtn.style.left = leftPos;
-            messageCopyBtn.style.right = 'auto';
-            messageCopyBtn.style.top = top + 'px';
-            messageCopyBtn.style.transform = 'none';
-          }
-          if (messageForwardBtn) {
-            messageForwardBtn.style.left = leftPos;
-            messageForwardBtn.style.right = 'auto';
-            messageForwardBtn.style.top = (top + 32) + 'px'; // ниже на 32px
-            messageForwardBtn.style.transform = 'none';
-          }
+          messageCopyBtn.style.left = leftPos;
+          messageCopyBtn.style.right = 'auto';
+          messageCopyBtn.style.top = top + 'px';
+          messageCopyBtn.style.transform = 'none';
         }
 
         // Для мобильной версии - показывать кнопки по тапу на сообщение
         if (this.isMobile) {
           messageContent.addEventListener('click', () => {
-            if (messageCopyBtn) {
-              messageCopyBtn.style.opacity = '1';
-              messageCopyBtn.style.visibility = 'visible';
-            }
-            if (messageForwardBtn) {
-              messageForwardBtn.style.opacity = '1';
-              messageForwardBtn.style.visibility = 'visible';
-            }
+            messageCopyBtn.style.opacity = '1';
+            messageCopyBtn.style.visibility = 'visible';
           });
         }
       }
-    }
 
-    if (messageCopyBtn) {
       messageCopyBtn.addEventListener('click', () => {
         console.log('Copy button clicked for file:', file.name);
         // Копируем файл в буфер обмена вместо текста названия
@@ -580,21 +563,6 @@ class DeepSeekChat {
           setTimeout(() => {
             messageCopyBtn.style.opacity = '0';
             messageCopyBtn.style.visibility = 'hidden';
-          }, 2000);
-        }
-      });
-    }
-
-    if (messageForwardBtn) {
-      messageForwardBtn.addEventListener('click', () => {
-        const messageContent = messageDiv.querySelector('.message-content');
-        const textToCopy = messageContent.querySelector('.message-text').textContent.trim();
-        this.copyCode(messageForwardBtn, textToCopy);
-        // Для мобильной версии - скрыть кнопки после использования
-        if (this.isMobile) {
-          setTimeout(() => {
-            messageForwardBtn.style.opacity = '0';
-            messageForwardBtn.style.visibility = 'hidden';
           }, 2000);
         }
       });
