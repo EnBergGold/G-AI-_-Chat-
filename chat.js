@@ -1651,27 +1651,40 @@ class DeepSeekChat {
       const base64String = base64Match[2];
       console.log('MIME type:', mimeType, 'base64 string length:', base64String.length);
 
-      // Для изображений конвертируем в PNG для совместимости
+      // Для изображений сначала пробуем с оригинальным форматом
       if (mimeType.startsWith('image/')) {
-        console.log('Converting image to PNG for clipboard compatibility');
-        this.convertImageToPngBlob(base64Data).then(pngBlob => {
-          console.log('PNG blob created, size:', pngBlob.size);
-          this.copyBlobToClipboard(button, pngBlob, 'image/png');
-        }).catch(err => {
-          console.error('Error converting image:', err);
-          // Fallback to base64 text
-          this.copyTextToClipboard(base64Data).then(() => {
-            button.classList.add('copied');
-            const originalContent = button.innerHTML;
-            button.innerHTML = `
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            `;
-            setTimeout(() => {
-              button.classList.remove('copied');
-              button.innerHTML = originalContent;
-            }, 2000);
+        console.log('Trying to copy image with original format:', mimeType);
+        // Конвертируем base64 в Uint8Array
+        const byteCharacters = atob(base64String);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: mimeType });
+
+        this.copyBlobToClipboard(button, blob, mimeType).catch(() => {
+          console.log('Original format failed, converting to PNG');
+          // Если не удалось, конвертируем в PNG
+          this.convertImageToPngBlob(base64Data).then(pngBlob => {
+            console.log('PNG blob created, size:', pngBlob.size);
+            this.copyBlobToClipboard(button, pngBlob, 'image/png');
+          }).catch(err => {
+            console.error('Error converting image:', err);
+            // Fallback to base64 text
+            this.copyTextToClipboard(base64Data).then(() => {
+              button.classList.add('copied');
+              const originalContent = button.innerHTML;
+              button.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              `;
+              setTimeout(() => {
+                button.classList.remove('copied');
+                button.innerHTML = originalContent;
+              }, 2000);
+            });
           });
         });
         return;
