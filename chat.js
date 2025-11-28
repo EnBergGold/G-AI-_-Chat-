@@ -1636,8 +1636,58 @@ class DeepSeekChat {
   }
 
   copyFileToClipboard(button, base64Data, filename) {
-    // Копируем base64 данные файла как текст в буфер обмена
-    // Это работает для всех типов файлов, позволяя копировать "файл" как данные
+    try {
+      const base64Match = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,([A-Za-z0-9+/=]+)/);
+
+      if (base64Match) {
+        const mimeType = base64Match[1];
+        const base64String = base64Match[2];
+        const byteCharacters = atob(base64String);
+        const byteNumbers = new Array(byteCharacters.length);
+
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: mimeType });
+
+        // Для изображений пытаемся копировать как файл
+        if (mimeType.startsWith('image/')) {
+          navigator.clipboard.write([
+            new ClipboardItem({ [mimeType]: blob })
+          ]).then(() => {
+            // Визуальная обратная связь - файл скопирован
+            button.classList.add('copied');
+            const originalContent = button.innerHTML;
+            button.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            `;
+
+            setTimeout(() => {
+              button.classList.remove('copied');
+              button.innerHTML = originalContent;
+            }, 2000);
+          }).catch(err => {
+            console.error('Ошибка копирования файла:', err);
+            // Fallback: копируем base64 данные как текст
+            this.copyBase64Fallback(button, base64Data);
+          });
+        } else {
+          // Для не изображений копируем base64 данные как текст
+          this.copyBase64Fallback(button, base64Data);
+        }
+      }
+    } catch (err) {
+      console.error('Ошибка обработки файла:', err);
+      // Fallback: копируем base64 данные как текст
+      this.copyBase64Fallback(button, base64Data);
+    }
+  }
+
+  copyBase64Fallback(button, base64Data) {
     navigator.clipboard.writeText(base64Data).then(() => {
       // Визуальная обратная связь - данные файла скопированы
       button.classList.add('copied');
