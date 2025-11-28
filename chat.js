@@ -424,6 +424,9 @@ class DeepSeekChat {
     const isText = file.type.startsWith('text/') || ['json', 'xml', 'csv'].includes(fileExtension.toLowerCase());
     const is3DModel = ['stl', 'usdz'].includes(fileExtension.toLowerCase());
 
+    // Определяем, поддерживается ли файл для копирования в буфер обмена
+    const isCopyable = isImage || file.type === 'text/plain' || file.type === 'text/html';
+
     messageDiv.innerHTML = `
       <div class="avatar">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -498,12 +501,12 @@ class DeepSeekChat {
         </div>
         <div class="message-time">${timestamp}</div>
       </div>
-      <button class="message-copy-btn" data-message-id="${messageId}">
+      ${isCopyable ? `<button class="message-copy-btn" data-message-id="${messageId}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
-      </button>
+      </button>` : ''}
       <button class="message-forward-btn" data-message-id="${messageId}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
