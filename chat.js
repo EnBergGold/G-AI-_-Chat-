@@ -1636,6 +1636,7 @@ class DeepSeekChat {
   }
 
   copyFileToClipboard(button, base64Data, filename) {
+    console.log('copyFileToClipboard called with filename:', filename, 'base64Data length:', base64Data.length);
     try {
       // Извлекаем MIME тип и base64 данные
       const base64Match = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,([A-Za-z0-9+/=]+)/);
@@ -1645,6 +1646,7 @@ class DeepSeekChat {
 
       const mimeType = base64Match[1];
       const base64String = base64Match[2];
+      console.log('MIME type:', mimeType, 'base64 string length:', base64String.length);
 
       // Конвертируем base64 в Uint8Array
       const byteCharacters = atob(base64String);
@@ -1653,13 +1655,23 @@ class DeepSeekChat {
         byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
       const byteArray = new Uint8Array(byteNumbers);
+      console.log('Byte array length:', byteArray.length);
 
       // Создаем Blob с правильным MIME типом
       const blob = new Blob([byteArray], { type: mimeType });
+      console.log('Blob created with type:', blob.type, 'size:', blob.size);
+
+      // Проверяем, поддерживается ли MIME тип
+      if (!ClipboardItem.supports(mimeType)) {
+        console.warn('MIME type not supported by ClipboardItem:', mimeType);
+        throw new Error('MIME type not supported');
+      }
 
       // Копируем файл в буфер обмена
       const clipboardItem = new ClipboardItem({ [mimeType]: blob });
+      console.log('ClipboardItem created');
       navigator.clipboard.write([clipboardItem]).then(() => {
+        console.log('File copied to clipboard successfully');
         // Визуальная обратная связь - файл скопирован
         button.classList.add('copied');
         const originalContent = button.innerHTML;
@@ -1677,6 +1689,7 @@ class DeepSeekChat {
         console.error('Ошибка копирования файла:', err);
         // Fallback: копируем base64 как текст
         this.copyTextToClipboard(base64Data).then(() => {
+          console.log('Fallback: base64 copied as text');
           button.classList.add('copied');
           const originalContent = button.innerHTML;
           button.innerHTML = `
