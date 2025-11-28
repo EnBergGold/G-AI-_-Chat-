@@ -1636,106 +1636,37 @@ class DeepSeekChat {
   }
 
   copyFileToClipboard(button, base64Data, filename) {
-    try {
-      const base64Match = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,([A-Za-z0-9+/=]+)/);
+    // Копируем base64 данные файла как текст в буфер обмена
+    // Это работает для всех типов файлов, позволяя копировать "файл" как данные
+    navigator.clipboard.writeText(base64Data).then(() => {
+      // Визуальная обратная связь - данные файла скопированы
+      button.classList.add('copied');
+      const originalContent = button.innerHTML;
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      `;
 
-      if (base64Match) {
-        const mimeType = base64Match[1];
-        const base64String = base64Match[2];
-        const byteCharacters = atob(base64String);
-        const byteNumbers = new Array(byteCharacters.length);
-
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: mimeType });
-
-        // Пытаемся скопировать файл в буфер обмена
-        navigator.clipboard.write([
-          new ClipboardItem({ [mimeType]: blob })
-        ]).then(() => {
-          // Визуальная обратная связь - файл скопирован
-          button.classList.add('copied');
-          const originalContent = button.innerHTML;
-          button.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          `;
-
-          setTimeout(() => {
-            button.classList.remove('copied');
-            button.innerHTML = originalContent;
-          }, 2000);
-        }).catch(err => {
-          console.error('Ошибка копирования файла:', err);
-          // Fallback: копируем base64 данные файла как текст
-          navigator.clipboard.writeText(base64Data).then(() => {
-            // Визуальная обратная связь - данные файла скопированы
-            button.classList.add('copied');
-            const originalContent = button.innerHTML;
-            button.innerHTML = `
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-            `;
-
-            setTimeout(() => {
-              button.classList.remove('copied');
-              button.innerHTML = originalContent;
-            }, 2000);
-          }).catch(err2 => {
-            console.error('Ошибка копирования данных файла:', err2);
-            // Показать ошибку
-            const originalContent = button.innerHTML;
-            button.innerHTML = `
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-            `;
-            setTimeout(() => {
-              button.innerHTML = originalContent;
-            }, 2000);
-          });
-        });
-      }
-    } catch (err) {
-      console.error('Ошибка обработки файла:', err);
-      // Fallback: копируем base64 данные файла как текст
-      navigator.clipboard.writeText(base64Data).then(() => {
-        // Визуальная обратная связь - данные файла скопированы
-        button.classList.add('copied');
-        const originalContent = button.innerHTML;
-        button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        `;
-
-        setTimeout(() => {
-          button.classList.remove('copied');
-          button.innerHTML = originalContent;
-        }, 2000);
-      }).catch(err2 => {
-        console.error('Ошибка копирования данных файла:', err2);
-        // Показать ошибку
-        const originalContent = button.innerHTML;
-        button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-        `;
-        setTimeout(() => {
-          button.innerHTML = originalContent;
-        }, 2000);
-      });
-    }
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.innerHTML = originalContent;
+      }, 2000);
+    }).catch(err => {
+      console.error('Ошибка копирования данных файла:', err);
+      // Показать ошибку
+      const originalContent = button.innerHTML;
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      `;
+      setTimeout(() => {
+        button.innerHTML = originalContent;
+      }, 2000);
+    });
   }
 
   showForwardPopup(text) {
