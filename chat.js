@@ -674,9 +674,11 @@ class DeepSeekChat {
 
   updateSendButton() {
     const sendButton = document.getElementById('send-button');
+    const messageInput = document.getElementById('message-input');
 
-    // Кнопка активна всегда, кроме состояния обработки
-    sendButton.disabled = this.isProcessing;
+    // Кнопка активна, если есть текст ИЛИ файлы, и не обрабатывается
+    const hasContent = messageInput.value.trim().length > 0 || this.attachedFiles.length > 0;
+    sendButton.disabled = !hasContent || this.isProcessing;
   }
 
   addMessage(text, sender) {
