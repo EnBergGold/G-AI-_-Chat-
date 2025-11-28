@@ -1772,17 +1772,19 @@ class DeepSeekChat {
       // Копируем файл в буфер обмена
       const clipboardItem = new ClipboardItem({ [mimeType]: blob });
       console.log('ClipboardItem created for', mimeType);
+
+      // Визуальная обратная связь - начинаем копирование
+      button.classList.add('copied');
+      const originalContent = button.innerHTML;
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      `;
+
       navigator.clipboard.write([clipboardItem]).then(() => {
         console.log('File copied to clipboard successfully');
-        // Визуальная обратная связь - файл скопирован
-        button.classList.add('copied');
-        const originalContent = button.innerHTML;
-        button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        `;
-
+        // Оставляем анимацию на 2 секунды
         setTimeout(() => {
           button.classList.remove('copied');
           button.innerHTML = originalContent;
@@ -1790,6 +1792,17 @@ class DeepSeekChat {
         resolve();
       }).catch(err => {
         console.error('Ошибка копирования файла:', err);
+        // Показываем ошибку
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        `;
+        setTimeout(() => {
+          button.innerHTML = originalContent;
+        }, 2000);
         reject(err);
       });
     });
