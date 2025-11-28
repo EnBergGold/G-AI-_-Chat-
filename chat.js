@@ -1663,12 +1663,12 @@ class DeepSeekChat {
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: mimeType });
 
-        this.copyBlobToClipboard(button, blob, mimeType).catch(() => {
+        this.copyBlobToClipboard(button, blob, mimeType, base64Data).catch(() => {
           console.log('Original format failed, converting to PNG');
           // Если не удалось, конвертируем в PNG
           this.convertImageToPngBlob(base64Data).then(pngBlob => {
             console.log('PNG blob created, size:', pngBlob.size);
-            this.copyBlobToClipboard(button, pngBlob, 'image/png');
+            this.copyBlobToClipboard(button, pngBlob, 'image/png', base64Data);
           }).catch(err => {
             console.error('Error converting image:', err);
             // Fallback to base64 text
@@ -1704,7 +1704,7 @@ class DeepSeekChat {
       const blob = new Blob([byteArray], { type: mimeType });
       console.log('Blob created with type:', blob.type, 'size:', blob.size);
 
-      this.copyBlobToClipboard(button, blob, mimeType);
+      this.copyBlobToClipboard(button, blob, mimeType, base64Data);
     } catch (err) {
       console.error('Ошибка обработки файла:', err);
       // Показать ошибку
@@ -1738,33 +1738,46 @@ class DeepSeekChat {
     });
   }
 
-  copyBlobToClipboard(button, blob, mimeType) {
-    // Проверяем поддержку ClipboardItem.supports, если доступно
-    if (typeof ClipboardItem !== 'undefined' && ClipboardItem.supports && !ClipboardItem.supports(mimeType)) {
-      console.warn('MIME type not supported by ClipboardItem:', mimeType);
-      throw new Error('MIME type not supported');
-    }
+  copyBlobToClipboard(button, blob, mimeType, base64Data) {
+    return new Promise((resolve, reject) => {
+      // Проверяем поддержку ClipboardItem
+      if (typeof ClipboardItem === 'undefined') {
+        reject(new Error('ClipboardItem not supported'));
+        return;
+      }
 
-    // Копируем файл в буфер обмена
-    const clipboardItem = new ClipboardItem({ [mimeType]: blob });
-    console.log('ClipboardItem created for', mimeType);
-    navigator.clipboard.write([clipboardItem]).then(() => {
-      console.log('File copied to clipboard successfully');
-      // Визуальная обратная связь - файл скопирован
-      button.classList.add('copied');
-      const originalContent = button.innerHTML;
-      button.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      `;
+      // Проверяем поддержку MIME типа, если supports доступен
+      if (ClipboardItem.supports && !ClipboardItem.supports(mimeType)) {
+        console.warn('MIME type not supported by ClipboardItem:', mimeType);
+        reject(new Error('MIME type not supported'));
+        return;
+      }
 
-      setTimeout(() => {
-        button.classList.remove('copied');
-        button.innerHTML = originalContent;
-      }, 2000);
+      // Копируем файл в буфер обмена
+      const clipboardItem = new ClipboardItem({ [mimeType]: blob });
+      console.log('ClipboardItem created for', mimeType);
+      navigator.clipboard.write([clipboardItem]).then(() => {
+        console.log('File copied to clipboard successfully');
+        // Визуальная обратная связь - файл скопирован
+        button.classList.add('copied');
+        const originalContent = button.innerHTML;
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        `;
+
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = originalContent;
+        }, 2000);
+        resolve();
+      }).catch(err => {
+        console.error('Ошибка копирования файла:', err);
+        reject(err);
+      });
     }).catch(err => {
-      console.error('Ошибка копирования файла:', err);
+      console.error('Clipboard copy failed, falling back to text:', err);
       // Fallback: копируем base64 как текст
       this.copyTextToClipboard(base64Data).then(() => {
         console.log('Fallback: base64 copied as text');
