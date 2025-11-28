@@ -509,13 +509,6 @@ class DeepSeekChat {
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
           <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
         </svg>
-      </button>
-      <button class="message-forward-btn" data-message-id="${messageId}">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
-          <polyline points="16 6 12 2 8 6"/>
-          <line x1="12" y1="2" x2="12" y2="15"/>
-        </svg>
       </button>` : ''}
     `;
 
@@ -900,13 +893,13 @@ class DeepSeekChat {
 
     if (messageForwardBtn) {
       messageForwardBtn.addEventListener('click', () => {
-        // Для файлов пытаемся копировать файл, для текста - текст
+        // Для пересылки файлов используем base64 данные, для текста - описание
+        const messageContent = messageDiv.querySelector('.message-content');
+        const textToCopy = messageContent.querySelector('.message-text').textContent.trim();
         if (isCopyable) {
-          this.copyFileToClipboard(messageForwardBtn, base64Data, file.name);
+          this.showForwardPopup(base64Data); // Пересылаем файл как base64 текст
         } else {
-          const messageContent = messageDiv.querySelector('.message-content');
-          const textToCopy = messageContent.querySelector('.message-text').textContent.trim();
-          this.copyCode(messageForwardBtn, textToCopy);
+          this.showForwardPopup(textToCopy); // Пересылаем описание
         }
         // Для мобильной версии - скрыть кнопки после использования
         if (this.isMobile) {
