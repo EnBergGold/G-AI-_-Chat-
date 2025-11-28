@@ -1530,10 +1530,9 @@ class DeepSeekChat {
     } catch (err) {
       console.error('Ошибка скачивания:', err);
       button.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        <svg viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
         Ошибка
       `;
@@ -1588,10 +1587,9 @@ class DeepSeekChat {
     } catch (err) {
       console.error('Ошибка скачивания:', err);
       button.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        <svg viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
         Ошибка
       `;
@@ -1611,30 +1609,32 @@ class DeepSeekChat {
     }
 
     navigator.clipboard.writeText(text).then(() => {
-      if (button.classList.contains('message-copy-btn')) {
-        // Для кнопки копирования сообщения - только изменение цвета иконки
-        button.classList.add('copied');
-        setTimeout(() => {
-          button.classList.remove('copied');
-        }, 2000);
-      } else {
-        // Для кнопок копирования кода - изменение текста и иконки
-        const originalContent = button.innerHTML;
-        button.classList.add('copied');
-        button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-          Скопировано
-        `;
+      // Одинаковая анимация для всех копируемых кнопок
+      button.classList.add('copied');
+      const originalContent = button.innerHTML;
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      `;
 
-        setTimeout(() => {
-          button.classList.remove('copied');
-          button.innerHTML = originalContent;
-        }, 2000);
-      }
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.innerHTML = originalContent;
+      }, 2000);
     }).catch(err => {
       console.error('Ошибка копирования:', err);
+      // Показать ошибку
+      const originalContent = button.innerHTML;
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      `;
+      setTimeout(() => {
+        button.innerHTML = originalContent;
+      }, 2000);
     });
   }
 
@@ -1692,10 +1692,9 @@ class DeepSeekChat {
             // Показать ошибку
             const originalContent = button.innerHTML;
             button.innerHTML = `
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              <svg viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
             `;
             setTimeout(() => {
@@ -1725,10 +1724,9 @@ class DeepSeekChat {
         // Показать ошибку
         const originalContent = button.innerHTML;
         button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          <svg viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         `;
         setTimeout(() => {
@@ -1740,10 +1738,9 @@ class DeepSeekChat {
       // Показать ошибку
       const originalContent = button.innerHTML;
       button.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12" y2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        <svg viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       `;
       setTimeout(() => {
@@ -1815,10 +1812,9 @@ class DeepSeekChat {
         console.error('Ошибка копирования файла:', err);
         // Показываем ошибку
         button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          <svg viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         `;
         setTimeout(() => {
