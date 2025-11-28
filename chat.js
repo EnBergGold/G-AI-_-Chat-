@@ -1530,11 +1530,17 @@ class DeepSeekChat {
     navigator.clipboard.writeText(text).then(() => {
       // Одинаковая анимация для всех копируемых кнопок
       const originalContent = button.innerHTML;
+      button.classList.add('copied');
       button.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="20 6 9 17 4 12"></polyline>
         </svg>
       `;
+
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.innerHTML = originalContent;
+      }, 2000);
 
       setTimeout(() => {
         button.innerHTML = originalContent;
@@ -1591,6 +1597,7 @@ class DeepSeekChat {
               console.log('PNG copy failed, falling back to base64 text');
               // Fallback to base64 text
               this.copyTextToClipboard(base64Data).then(() => {
+                button.classList.add('copied');
                 const originalContent = button.innerHTML;
                 button.innerHTML = `
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1598,6 +1605,7 @@ class DeepSeekChat {
                   </svg>
                 `;
                 setTimeout(() => {
+                  button.classList.remove('copied');
                   button.innerHTML = originalContent;
                 }, 2000);
               });
