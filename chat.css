@@ -940,6 +940,7 @@
   justify-content: center;
   color: rgba(255, 255, 255, 0.8);
   z-index: 100;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .message-copy-btn {
