@@ -742,7 +742,7 @@ class DeepSeekChat {
         `}
         <div class="message-time">${timestamp}</div>
       </div>
-      ${!codeDetection.isCode && !fileDetection.isFile ? `
+      ${!codeDetection.isCode && !fileDetection.isFile && !urlDetection.isURL ? `
         <button class="message-copy-btn" data-message-id="${messageId}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -846,7 +846,7 @@ class DeepSeekChat {
         // Для одной URL - обе кнопки: "Перейти" и "Копировать"
         const goBtn = messageDiv.querySelector('.url-go-btn');
         const copyBtn = messageDiv.querySelector('.copy-code-btn');
-        
+
         if (goBtn) {
           goBtn.addEventListener('click', () => {
             window.open(urlDetection.url, '_blank');
@@ -854,7 +854,7 @@ class DeepSeekChat {
             goBtn.classList.add('visited');
           });
         }
-        
+
         if (copyBtn) {
           copyBtn.addEventListener('click', () => {
             this.copyCode(copyBtn, urlDetection.url);
