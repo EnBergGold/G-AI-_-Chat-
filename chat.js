@@ -1782,7 +1782,12 @@ class DeepSeekChat {
         </svg>
       `;
 
-      navigator.clipboard.write([clipboardItem]).then(() => {
+      const writePromise = navigator.clipboard.write([clipboardItem]);
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Clipboard write timeout')), 1000);
+      });
+
+      Promise.race([writePromise, timeoutPromise]).then(() => {
         console.log('File copied to clipboard successfully');
         // Оставляем анимацию на 2 секунды
         setTimeout(() => {
