@@ -1636,23 +1636,76 @@ class DeepSeekChat {
   }
 
   copyFileToClipboard(button, base64Data, filename) {
-    // Используем совместимый способ копирования текста
-    this.copyTextToClipboard(base64Data).then(() => {
-      // Визуальная обратная связь - данные файла скопированы
-      button.classList.add('copied');
-      const originalContent = button.innerHTML;
-      button.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      `;
+    try {
+      // Извлекаем MIME тип и base64 данные
+      const base64Match = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,([A-Za-z0-9+/=]+)/);
+      if (!base64Match) {
+        throw new Error('Неверный формат base64 данных');
+      }
 
-      setTimeout(() => {
-        button.classList.remove('copied');
-        button.innerHTML = originalContent;
-      }, 2000);
-    }).catch(err => {
-      console.error('Ошибка копирования данных файла:', err);
+      const mimeType = base64Match[1];
+      const base64String = base64Match[2];
+
+      // Конвертируем base64 в Uint8Array
+      const byteCharacters = atob(base64String);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+
+      // Создаем Blob с правильным MIME типом
+      const blob = new Blob([byteArray], { type: mimeType });
+
+      // Копируем файл в буфер обмена
+      const clipboardItem = new ClipboardItem({ [mimeType]: blob });
+      navigator.clipboard.write([clipboardItem]).then(() => {
+        // Визуальная обратная связь - файл скопирован
+        button.classList.add('copied');
+        const originalContent = button.innerHTML;
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        `;
+
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = originalContent;
+        }, 2000);
+      }).catch(err => {
+        console.error('Ошибка копирования файла:', err);
+        // Fallback: копируем base64 как текст
+        this.copyTextToClipboard(base64Data).then(() => {
+          button.classList.add('copied');
+          const originalContent = button.innerHTML;
+          button.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          `;
+          setTimeout(() => {
+            button.classList.remove('copied');
+            button.innerHTML = originalContent;
+          }, 2000);
+        }).catch(fallbackErr => {
+          console.error('Ошибка fallback копирования:', fallbackErr);
+          // Показать ошибку
+          const originalContent = button.innerHTML;
+          button.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          `;
+          setTimeout(() => {
+            button.innerHTML = originalContent;
+          }, 2000);
+        });
+      });
+    } catch (err) {
+      console.error('Ошибка обработки файла:', err);
       // Показать ошибку
       const originalContent = button.innerHTML;
       button.innerHTML = `
@@ -1665,7 +1718,7 @@ class DeepSeekChat {
       setTimeout(() => {
         button.innerHTML = originalContent;
       }, 2000);
-    });
+    }
   }
 
   copyTextToClipboard(text) {
