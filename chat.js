@@ -1704,7 +1704,21 @@ class DeepSeekChat {
       const blob = new Blob([byteArray], { type: mimeType });
       console.log('Blob created with type:', blob.type, 'size:', blob.size);
 
-      this.copyBlobToClipboard(button, blob, mimeType, base64Data);
+      this.copyBlobToClipboard(button, blob, mimeType, base64Data).catch(err => {
+        console.error('Failed to copy file:', err);
+        // Показать ошибку
+        const originalContent = button.innerHTML;
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        `;
+        setTimeout(() => {
+          button.innerHTML = originalContent;
+        }, 2000);
+      });
     } catch (err) {
       console.error('Ошибка обработки файла:', err);
       // Показать ошибку
@@ -1775,37 +1789,6 @@ class DeepSeekChat {
       }).catch(err => {
         console.error('Ошибка копирования файла:', err);
         reject(err);
-      });
-    }).catch(err => {
-      console.error('Clipboard copy failed, falling back to text:', err);
-      // Fallback: копируем base64 как текст
-      this.copyTextToClipboard(base64Data).then(() => {
-        console.log('Fallback: base64 copied as text');
-        button.classList.add('copied');
-        const originalContent = button.innerHTML;
-        button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        `;
-        setTimeout(() => {
-          button.classList.remove('copied');
-          button.innerHTML = originalContent;
-        }, 2000);
-      }).catch(fallbackErr => {
-        console.error('Ошибка fallback копирования:', fallbackErr);
-        // Показать ошибку
-        const originalContent = button.innerHTML;
-        button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-        `;
-        setTimeout(() => {
-          button.innerHTML = originalContent;
-        }, 2000);
       });
     });
   }
