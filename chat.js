@@ -1599,6 +1599,11 @@ class DeepSeekChat {
     if (button.classList.contains('message-forward-btn')) {
       // Для кнопки пересылки - показать попап
       this.showForwardPopup(text);
+      // Выделить кнопку голубым
+      button.classList.add('forwarded');
+      setTimeout(() => {
+        button.classList.remove('forwarded');
+      }, 2000);
       return;
     }
 

@@ -998,6 +998,10 @@
   color: #67B4F8;
 }
 
+.message-forward-btn.forwarded svg {
+  color: #67B4F8;
+}
+
 /* Попап для пересылки */
 .forward-popup {
   position: fixed;
