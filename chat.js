@@ -900,9 +900,14 @@ class DeepSeekChat {
 
     if (messageForwardBtn) {
       messageForwardBtn.addEventListener('click', () => {
-        const messageContent = messageDiv.querySelector('.message-content');
-        const textToCopy = messageContent.querySelector('.message-text').textContent.trim();
-        this.copyCode(messageForwardBtn, textToCopy);
+        // Для файлов пытаемся копировать файл, для текста - текст
+        if (isCopyable) {
+          this.copyFileToClipboard(messageForwardBtn, base64Data, file.name);
+        } else {
+          const messageContent = messageDiv.querySelector('.message-content');
+          const textToCopy = messageContent.querySelector('.message-text').textContent.trim();
+          this.copyCode(messageForwardBtn, textToCopy);
+        }
         // Для мобильной версии - скрыть кнопки после использования
         if (this.isMobile) {
           setTimeout(() => {
@@ -1634,6 +1639,7 @@ class DeepSeekChat {
         </svg>
       `;
       setTimeout(() => {
+        button.classList.remove('copied');
         button.innerHTML = originalContent;
       }, 2000);
     });
