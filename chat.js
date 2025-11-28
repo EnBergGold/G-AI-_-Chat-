@@ -30,6 +30,7 @@ class DeepSeekChat {
     this.scrollThreshold = 200; // Расстояние от низа, при котором показывается кнопка
     this.forwardText = ''; // Текст для пересылки
     this.attachedFiles = []; // Массив прикреплённых файлов
+    this.clipboardSupported = typeof ClipboardItem !== 'undefined'; // Проверка поддержки буфера обмена для файлов
     
     console.log('isMobile:', this.isMobile);
     
@@ -427,7 +428,7 @@ class DeepSeekChat {
     const is3DModel = ['stl', 'usdz'].includes(fileExtension.toLowerCase());
 
     // Определяем, поддерживается ли файл для копирования в буфер обмена
-    const isCopyable = isImage || file.type === 'text/plain' || file.type === 'text/html';
+    const isCopyable = (isImage || file.type === 'text/plain' || file.type === 'text/html') && this.clipboardSupported;
 
     messageDiv.innerHTML = `
       <div class="avatar">
@@ -441,7 +442,7 @@ class DeepSeekChat {
           <div class="file-info">
             <span class="file-type">${fileExtension}</span>
           </div>
-          ${isCopyable ? `<button class="download-file-btn" data-message-id="${messageId}">
+          ${(isCopyable || isPDF) ? `<button class="download-file-btn" data-message-id="${messageId}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
