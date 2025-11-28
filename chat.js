@@ -1741,13 +1741,6 @@ class DeepSeekChat {
   setProcessingState(processing) {
     this.isProcessing = processing;
     this.updateSendButton();
-    
-    const sendButton = document.getElementById('send-button');
-    if (processing) {
-      sendButton.innerHTML = '<svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M12 2V6M12 18V22M6 12H2M22 12H18M19.07 4.93L16.24 7.76M7.76 16.24L4.93 19.07M19.07 19.07L16.24 16.24M7.76 7.76L4.93 4.93" stroke="currentColor" stroke-width="2"/></svg>';
-    } else {
-      sendButton.innerHTML = '<svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M2 21L23 12L2 3V10L17 12L2 14V21Z" fill="currentColor"/></svg>';
-    }
   }
 
   async sendToWebhook(message) {
