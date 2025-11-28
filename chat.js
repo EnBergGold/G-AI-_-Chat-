@@ -1529,7 +1529,6 @@ class DeepSeekChat {
 
     navigator.clipboard.writeText(text).then(() => {
       // Одинаковая анимация для всех копируемых кнопок
-      button.classList.add('copied');
       const originalContent = button.innerHTML;
       button.innerHTML = `
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1538,7 +1537,6 @@ class DeepSeekChat {
       `;
 
       setTimeout(() => {
-        button.classList.remove('copied');
         button.innerHTML = originalContent;
       }, 2000);
     }).catch(err => {
@@ -1552,7 +1550,6 @@ class DeepSeekChat {
         </svg>
       `;
       setTimeout(() => {
-        button.classList.remove('copied');
         button.innerHTML = originalContent;
       }, 2000);
     });
@@ -1594,7 +1591,6 @@ class DeepSeekChat {
               console.log('PNG copy failed, falling back to base64 text');
               // Fallback to base64 text
               this.copyTextToClipboard(base64Data).then(() => {
-                button.classList.add('copied');
                 const originalContent = button.innerHTML;
                 button.innerHTML = `
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1602,7 +1598,6 @@ class DeepSeekChat {
                   </svg>
                 `;
                 setTimeout(() => {
-                  button.classList.remove('copied');
                   button.innerHTML = originalContent;
                 }, 2000);
               });
@@ -1707,7 +1702,6 @@ class DeepSeekChat {
       console.log('ClipboardItem created for', mimeType);
 
       // Визуальная обратная связь - начинаем копирование
-      button.classList.add('copied');
       const originalContent = button.innerHTML;
       button.innerHTML = `
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1724,14 +1718,12 @@ class DeepSeekChat {
         console.log('File copied to clipboard successfully');
         // Оставляем анимацию на 2 секунды
         setTimeout(() => {
-          button.classList.remove('copied');
           button.innerHTML = originalContent;
         }, 2000);
         resolve();
       }).catch(err => {
         console.error('Ошибка копирования файла:', err);
         // Показываем ошибку
-        button.classList.remove('copied');
         button.innerHTML = `
           <svg viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="2">
             <line x1="18" y1="6" x2="6" y2="18"></line>
