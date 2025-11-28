@@ -1651,6 +1651,33 @@ class DeepSeekChat {
       const base64String = base64Match[2];
       console.log('MIME type:', mimeType, 'base64 string length:', base64String.length);
 
+      // Для изображений конвертируем в PNG для совместимости
+      if (mimeType.startsWith('image/')) {
+        console.log('Converting image to PNG for clipboard compatibility');
+        this.convertImageToPngBlob(base64Data).then(pngBlob => {
+          console.log('PNG blob created, size:', pngBlob.size);
+          this.copyBlobToClipboard(button, pngBlob, 'image/png');
+        }).catch(err => {
+          console.error('Error converting image:', err);
+          // Fallback to base64 text
+          this.copyTextToClipboard(base64Data).then(() => {
+            button.classList.add('copied');
+            const originalContent = button.innerHTML;
+            button.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            `;
+            setTimeout(() => {
+              button.classList.remove('copied');
+              button.innerHTML = originalContent;
+            }, 2000);
+          });
+        });
+        return;
+      }
+
+      // Для не-изображений используем оригинальный MIME тип
       // Конвертируем base64 в Uint8Array
       const byteCharacters = atob(base64String);
       const byteNumbers = new Array(byteCharacters.length);
@@ -1664,62 +1691,7 @@ class DeepSeekChat {
       const blob = new Blob([byteArray], { type: mimeType });
       console.log('Blob created with type:', blob.type, 'size:', blob.size);
 
-      // Проверяем, поддерживается ли MIME тип
-      if (!ClipboardItem.supports(mimeType)) {
-        console.warn('MIME type not supported by ClipboardItem:', mimeType);
-        throw new Error('MIME type not supported');
-      }
-
-      // Копируем файл в буфер обмена
-      const clipboardItem = new ClipboardItem({ [mimeType]: blob });
-      console.log('ClipboardItem created');
-      navigator.clipboard.write([clipboardItem]).then(() => {
-        console.log('File copied to clipboard successfully');
-        // Визуальная обратная связь - файл скопирован
-        button.classList.add('copied');
-        const originalContent = button.innerHTML;
-        button.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        `;
-
-        setTimeout(() => {
-          button.classList.remove('copied');
-          button.innerHTML = originalContent;
-        }, 2000);
-      }).catch(err => {
-        console.error('Ошибка копирования файла:', err);
-        // Fallback: копируем base64 как текст
-        this.copyTextToClipboard(base64Data).then(() => {
-          console.log('Fallback: base64 copied as text');
-          button.classList.add('copied');
-          const originalContent = button.innerHTML;
-          button.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          `;
-          setTimeout(() => {
-            button.classList.remove('copied');
-            button.innerHTML = originalContent;
-          }, 2000);
-        }).catch(fallbackErr => {
-          console.error('Ошибка fallback копирования:', fallbackErr);
-          // Показать ошибку
-          const originalContent = button.innerHTML;
-          button.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-          `;
-          setTimeout(() => {
-            button.innerHTML = originalContent;
-          }, 2000);
-        });
-      });
+      this.copyBlobToClipboard(button, blob, mimeType);
     } catch (err) {
       console.error('Ошибка обработки файла:', err);
       // Показать ошибку
@@ -1735,6 +1707,81 @@ class DeepSeekChat {
         button.innerHTML = originalContent;
       }, 2000);
     }
+  }
+
+  convertImageToPngBlob(base64Data) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob(resolve, 'image/png');
+      };
+      img.onerror = reject;
+      img.src = base64Data;
+    });
+  }
+
+  copyBlobToClipboard(button, blob, mimeType) {
+    // Проверяем поддержку ClipboardItem.supports, если доступно
+    if (typeof ClipboardItem !== 'undefined' && ClipboardItem.supports && !ClipboardItem.supports(mimeType)) {
+      console.warn('MIME type not supported by ClipboardItem:', mimeType);
+      throw new Error('MIME type not supported');
+    }
+
+    // Копируем файл в буфер обмена
+    const clipboardItem = new ClipboardItem({ [mimeType]: blob });
+    console.log('ClipboardItem created for', mimeType);
+    navigator.clipboard.write([clipboardItem]).then(() => {
+      console.log('File copied to clipboard successfully');
+      // Визуальная обратная связь - файл скопирован
+      button.classList.add('copied');
+      const originalContent = button.innerHTML;
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      `;
+
+      setTimeout(() => {
+        button.classList.remove('copied');
+        button.innerHTML = originalContent;
+      }, 2000);
+    }).catch(err => {
+      console.error('Ошибка копирования файла:', err);
+      // Fallback: копируем base64 как текст
+      this.copyTextToClipboard(base64Data).then(() => {
+        console.log('Fallback: base64 copied as text');
+        button.classList.add('copied');
+        const originalContent = button.innerHTML;
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        `;
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = originalContent;
+        }, 2000);
+      }).catch(fallbackErr => {
+        console.error('Ошибка fallback копирования:', fallbackErr);
+        // Показать ошибку
+        const originalContent = button.innerHTML;
+        button.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        `;
+        setTimeout(() => {
+          button.innerHTML = originalContent;
+        }, 2000);
+      });
+    });
   }
 
   copyTextToClipboard(text) {
