@@ -575,45 +575,6 @@ class DeepSeekChat {
       });
     }
 
-    // Обработчик для кнопки пересылки файла
-    const messageForwardBtn = messageDiv.querySelector('.message-forward-btn');
-    if (messageForwardBtn) {
-      const messageContent = messageDiv.querySelector('.message-content');
-      if (messageContent) {
-        const isUser = true; // Файлы всегда от пользователя
-        const contentRect = messageContent.getBoundingClientRect();
-        const messageRect = messageDiv.getBoundingClientRect();
-        const top = contentRect.top - messageRect.top + 10;
-        if (isUser) {
-          // Для пользовательских сообщений - слева от контента
-          const leftPos = (contentRect.left - messageRect.left - 34) + 'px';
-          messageForwardBtn.style.left = leftPos;
-          messageForwardBtn.style.right = 'auto';
-          messageForwardBtn.style.top = (top + 32) + 'px'; // ниже на 32px
-          messageForwardBtn.style.transform = 'none';
-        }
-
-        // Для мобильной версии - показывать кнопки по тапу на сообщение
-        if (this.isMobile) {
-          messageContent.addEventListener('click', () => {
-            messageForwardBtn.style.opacity = '1';
-            messageForwardBtn.style.visibility = 'visible';
-          });
-        }
-      }
-
-      messageForwardBtn.addEventListener('click', () => {
-        // Для пересылки файлов используем base64 данные
-        this.showForwardPopup(base64Data);
-        // Для мобильной версии - скрыть кнопки после использования
-        if (this.isMobile) {
-          setTimeout(() => {
-            messageForwardBtn.style.opacity = '0';
-            messageForwardBtn.style.visibility = 'hidden';
-          }, 2000);
-        }
-      });
-    }
 
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
     };
@@ -826,10 +787,9 @@ class DeepSeekChat {
       }
     }
 
-    // Обработчики для кнопок копирования и пересылки сообщения
+    // Обработчики для кнопок копирования
     const messageCopyBtn = messageDiv.querySelector('.message-copy-btn');
-    const messageForwardBtn = messageDiv.querySelector('.message-forward-btn');
-    if (messageCopyBtn || messageForwardBtn) {
+    if (messageCopyBtn) {
       const messageContent = messageDiv.querySelector('.message-content');
       if (messageContent) {
         const isUser = sender === 'user';
@@ -839,46 +799,24 @@ class DeepSeekChat {
         if (isUser) {
           // Для пользовательских сообщений - слева от контента
           const leftPos = (contentRect.left - messageRect.left - 34) + 'px';
-          if (messageCopyBtn) {
-            messageCopyBtn.style.left = leftPos;
-            messageCopyBtn.style.right = 'auto';
-            messageCopyBtn.style.top = top + 'px';
-            messageCopyBtn.style.transform = 'none';
-          }
-          if (messageForwardBtn) {
-            messageForwardBtn.style.left = leftPos;
-            messageForwardBtn.style.right = 'auto';
-            messageForwardBtn.style.top = (top + 32) + 'px'; // ниже на 32px
-            messageForwardBtn.style.transform = 'none';
-          }
+          messageCopyBtn.style.left = leftPos;
+          messageCopyBtn.style.right = 'auto';
+          messageCopyBtn.style.top = top + 'px';
+          messageCopyBtn.style.transform = 'none';
         } else {
           // Для AI сообщений - справа от контента, сдвинуто на 12px влево
           const leftPos = (contentRect.left - messageRect.left + contentRect.width - 2) + 'px';
-          if (messageCopyBtn) {
-            messageCopyBtn.style.left = leftPos;
-            messageCopyBtn.style.right = 'auto';
-            messageCopyBtn.style.top = top + 'px';
-            messageCopyBtn.style.transform = 'none';
-          }
-          if (messageForwardBtn) {
-            messageForwardBtn.style.left = leftPos;
-            messageForwardBtn.style.right = 'auto';
-            messageForwardBtn.style.top = (top + 32) + 'px'; // ниже на 32px
-            messageForwardBtn.style.transform = 'none';
-          }
+          messageCopyBtn.style.left = leftPos;
+          messageCopyBtn.style.right = 'auto';
+          messageCopyBtn.style.top = top + 'px';
+          messageCopyBtn.style.transform = 'none';
         }
 
         // Для мобильной версии - показывать кнопки по тапу на сообщение
         if (this.isMobile) {
           messageContent.addEventListener('click', () => {
-            if (messageCopyBtn) {
-              messageCopyBtn.style.opacity = '1';
-              messageCopyBtn.style.visibility = 'visible';
-            }
-            if (messageForwardBtn) {
-              messageForwardBtn.style.opacity = '1';
-              messageForwardBtn.style.visibility = 'visible';
-            }
+            messageCopyBtn.style.opacity = '1';
+            messageCopyBtn.style.visibility = 'visible';
           });
         }
       }
@@ -899,25 +837,6 @@ class DeepSeekChat {
       });
     }
 
-    if (messageForwardBtn) {
-      messageForwardBtn.addEventListener('click', () => {
-        // Для пересылки файлов используем base64 данные, для текста - описание
-        const messageContent = messageDiv.querySelector('.message-content');
-        const textToCopy = messageContent.querySelector('.message-text').textContent.trim();
-        if (isCopyable) {
-          this.showForwardPopup(base64Data); // Пересылаем файл как base64 текст
-        } else {
-          this.showForwardPopup(textToCopy); // Пересылаем описание
-        }
-        // Для мобильной версии - скрыть кнопки после использования
-        if (this.isMobile) {
-          setTimeout(() => {
-            messageForwardBtn.style.opacity = '0';
-            messageForwardBtn.style.visibility = 'hidden';
-          }, 2000);
-        }
-      });
-    }
       
     // Если это URL, добавляем обработчики для кнопок
     if (urlDetection.isURL) {
