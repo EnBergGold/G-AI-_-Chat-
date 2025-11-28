@@ -1670,7 +1670,23 @@ class DeepSeekChat {
           // Если не удалось, конвертируем в PNG
           this.convertImageToPngBlob(base64Data).then(pngBlob => {
             console.log('PNG blob created, size:', pngBlob.size);
-            this.copyBlobToClipboard(button, pngBlob, 'image/png', base64Data);
+            this.copyBlobToClipboard(button, pngBlob, 'image/png', base64Data).catch(() => {
+              console.log('PNG copy failed, falling back to base64 text');
+              // Fallback to base64 text
+              this.copyTextToClipboard(base64Data).then(() => {
+                button.classList.add('copied');
+                const originalContent = button.innerHTML;
+                button.innerHTML = `
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                `;
+                setTimeout(() => {
+                  button.classList.remove('copied');
+                  button.innerHTML = originalContent;
+                }, 2000);
+              });
+            });
           }).catch(err => {
             console.error('Error converting image:', err);
             // Показать ошибку
