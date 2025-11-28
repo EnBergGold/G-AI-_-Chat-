@@ -1636,9 +1636,8 @@ class DeepSeekChat {
   }
 
   copyFileToClipboard(button, base64Data, filename) {
-    // Копируем base64 данные файла как текст в буфер обмена
-    // Это позволяет копировать любые файлы как их данные
-    navigator.clipboard.writeText(base64Data).then(() => {
+    // Используем совместимый способ копирования текста
+    this.copyTextToClipboard(base64Data).then(() => {
       // Визуальная обратная связь - данные файла скопированы
       button.classList.add('copied');
       const originalContent = button.innerHTML;
@@ -1666,6 +1665,45 @@ class DeepSeekChat {
       setTimeout(() => {
         button.innerHTML = originalContent;
       }, 2000);
+    });
+  }
+
+  copyTextToClipboard(text) {
+    return new Promise((resolve, reject) => {
+      // Пытаемся использовать Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(resolve).catch(() => {
+          // Fallback на execCommand
+          this.fallbackCopyTextToClipboard(text).then(resolve).catch(reject);
+        });
+      } else {
+        // Fallback на execCommand
+        this.fallbackCopyTextToClipboard(text).then(resolve).catch(reject);
+      }
+    });
+  }
+
+  fallbackCopyTextToClipboard(text) {
+    return new Promise((resolve, reject) => {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          resolve();
+        } else {
+          reject(new Error('Copy command was unsuccessful'));
+        }
+      } catch (err) {
+        reject(err);
+      }
+      document.body.removeChild(textArea);
     });
   }
 
