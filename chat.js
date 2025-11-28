@@ -322,6 +322,7 @@ class DeepSeekChat {
     file.id = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     this.attachedFiles.push(file);
     this.addFilePreview(file);
+    this.updateSendButton();
   }
 
   addFilePreview(file) {
