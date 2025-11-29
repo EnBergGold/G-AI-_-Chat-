@@ -653,7 +653,7 @@ class DeepSeekChat {
     // Установить opacity иконки
     const svg = sendButton.querySelector('svg');
     if (svg) {
-      svg.style.opacity = sendButton.disabled ? '0.7' : '1';
+      svg.style.opacity = sendButton.disabled ? '0.6' : '1';
     }
   }
 
