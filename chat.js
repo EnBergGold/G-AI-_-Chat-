@@ -649,6 +649,12 @@ class DeepSeekChat {
     // Кнопка активна, если есть текст ИЛИ файлы, и не обрабатывается
     const hasContent = messageInput.value.trim().length > 0 || this.attachedFiles.length > 0;
     sendButton.disabled = !hasContent || this.isProcessing;
+
+    // Установить opacity иконки
+    const svg = sendButton.querySelector('svg');
+    if (svg) {
+      svg.style.opacity = sendButton.disabled ? '0.7' : '1';
+    }
   }
 
   addMessage(text, sender) {
