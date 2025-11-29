@@ -511,7 +511,7 @@
   border-radius: 16px;
   overflow: hidden;
   transition: all 0.2s ease;
-  background: rgba(31, 31, 31, 0.9);
+  background: transparent;
   width: 100%;
 }
 
@@ -523,7 +523,7 @@
 .input-inner {
   display: flex;
   align-items: center;
-  background: transparent;
+  background: rgba(31, 31, 31, 0.9);
   border-radius: 16px;
   width: 100%;
   min-width: 0;
