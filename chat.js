@@ -527,14 +527,6 @@ class DeepSeekChat {
       });
     }
 
-    // Добавляем обработчик открытия изображения
-    const openBtn = messageDiv.querySelector('.open-image-btn');
-    if (openBtn) {
-      openBtn.addEventListener('click', () => {
-        window.open(base64Data, '_blank');
-      });
-    }
-
     // Обработчики для кнопок копирования
     const messageCopyBtn = messageDiv.querySelector('.message-copy-btn');
     if (messageCopyBtn) {
@@ -700,13 +692,6 @@ class DeepSeekChat {
               </svg>
               Скачать
             </button>
-            ${isImage ? `<button class="open-image-btn" data-message-id="${messageId}">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" fill="none"/>
-                <path d="M9 12h6M12 9v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-              Открыть
-            </button>` : ''}
           </div>
           <div class="message-text">
             <div>${this.escapeHtml(text)}</div>

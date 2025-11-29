@@ -315,33 +315,6 @@
   color: #10B981;
 }
 
-.open-image-btn {
-  background: rgba(103, 180, 248, 0.1);
-  border: 1px solid rgba(103, 180, 248, 0.3);
-  border-radius: 6px;
-  padding: 4px 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.2s ease;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.8);
-  flex-shrink: 0;
-  white-space: nowrap;
-}
-
-.open-image-btn:hover {
-  background: rgba(103, 180, 248, 0.2);
-  border-color: rgba(103, 180, 248, 0.5);
-}
-
-.open-image-btn svg {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-}
-
 .message-text pre {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.05);
