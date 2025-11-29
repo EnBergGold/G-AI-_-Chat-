@@ -1546,8 +1546,8 @@ class DeepSeekChat {
       setTimeout(() => {
         button.classList.remove('copied');
         button.innerHTML = originalContent;
-        // Для мобильной версии скрыть кнопку через 2 секунды
-        if (this.isMobile) {
+        // Для десктопной версии скрыть кнопку, если не наведён курсор
+        if (!this.isMobile && !button.matches(':hover')) {
           button.style.opacity = '0';
           button.style.visibility = 'hidden';
         }
