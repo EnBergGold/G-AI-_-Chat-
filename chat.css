@@ -604,7 +604,7 @@
 
 /* Кнопка отправки - фон 42px, иконка 42px */
 .send-button {
-  background: transparent;
+  background: transparent !important;
   color: #FFFFFF;
   border: none;
   border-radius: 0;
