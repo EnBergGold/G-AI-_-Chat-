@@ -602,12 +602,12 @@
   background: transparent;
 }
 
-/* Кнопка отправки - фон 42px, иконка 23px */
+/* Кнопка отправки - фон 42px, иконка 42px */
 .send-button {
-  background: #9c00f9;
+  background: transparent;
   color: #FFFFFF;
   border: none;
-  border-radius: 50%;
+  border-radius: 0;
   padding: 0;
   cursor: pointer;
   transition: all 0.2s ease;
