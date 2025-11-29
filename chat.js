@@ -1534,27 +1534,16 @@ class DeepSeekChat {
     }
 
     navigator.clipboard.writeText(text).then(() => {
-      // Одинаковая анимация для всех копируемых кнопок
-      const originalContent = button.innerHTML;
+      // Анимация: изменение цветов на зелёный на 2 секунды
       button.classList.add('copied');
-      button.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      `;
 
       setTimeout(() => {
         button.classList.remove('copied');
-        button.innerHTML = originalContent;
         // Для десктопной версии скрыть кнопку, если не наведён курсор
         if (!this.isMobile && !button.matches(':hover')) {
           button.style.opacity = '0';
           button.style.visibility = 'hidden';
         }
-      }, 2000);
-
-      setTimeout(() => {
-        button.innerHTML = originalContent;
       }, 2000);
     }).catch(err => {
       console.error('Ошибка копирования:', err);
