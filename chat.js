@@ -1920,7 +1920,11 @@ class DeepSeekChat {
 
       // Добавляем ответ AI только если был отправлен контент
       if (response) {
-        this.addMessage(response, 'ai');
+        // Небольшая задержка для реалистичности
+        setTimeout(() => {
+          this.addMessage(response, 'ai');
+          this.scrollToBottom();
+        }, 500);
       }
 
       this.scrollToBottom();
