@@ -626,9 +626,12 @@
 }
 
 .send-button:disabled {
-  opacity: 0.7;
   cursor: not-allowed;
   transform: none;
+}
+
+.send-button:disabled svg {
+  opacity: 0.7;
 }
 
 /* Полоса прокрутки */
