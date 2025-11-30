@@ -1538,6 +1538,7 @@ class DeepSeekChat {
       if (button.classList.contains('message-copy-btn')) {
         // Для маленьких кнопок возле сообщений - галочка
         const originalContent = button.innerHTML;
+        console.log('Setting green checkmark for file copy button');
         button.innerHTML = `
           <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
             <polyline points="20 6 9 17 4 12"></polyline>
