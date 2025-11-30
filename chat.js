@@ -1534,11 +1534,16 @@ class DeepSeekChat {
     }
 
     navigator.clipboard.writeText(text).then(() => {
-      // Анимация: изменение цветов на зелёный на 2 секунды
-      button.classList.add('copied');
+      // Анимация: показать зелёную галочку на 2 секунды
+      const originalContent = button.innerHTML;
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      `;
 
       setTimeout(() => {
-        button.classList.remove('copied');
+        button.innerHTML = originalContent;
         // Для десктопной версии скрыть кнопку, если не наведён курсор
         if (!this.isMobile && !button.matches(':hover')) {
           button.style.opacity = '0';
