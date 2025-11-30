@@ -1730,6 +1730,7 @@ class DeepSeekChat {
 
       // Визуальная обратная связь - начинаем копирование
       const originalContent = button.innerHTML;
+      button.style.color = '#10B981';
       button.innerHTML = `
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="20 6 9 17 4 12"></polyline>
@@ -1746,6 +1747,7 @@ class DeepSeekChat {
         // Оставляем анимацию на 2 секунды
         setTimeout(() => {
           button.innerHTML = originalContent;
+          button.style.color = '';
         }, 2000);
         resolve();
       }).catch(err => {
