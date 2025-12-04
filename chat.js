@@ -31,6 +31,7 @@ class DeepSeekChat {
     this.forwardText = ''; // Текст для пересылки
     this.attachedFiles = []; // Массив прикреплённых файлов
     this.clipboardSupported = typeof ClipboardItem !== 'undefined'; // Проверка поддержки буфера обмена для файлов
+    this.statusClickCount = 0; // Счётчик кликов на статус
     
     console.log('isMobile:', this.isMobile);
     
@@ -163,6 +164,22 @@ class DeepSeekChat {
           e.preventDefault();
           e.stopPropagation();
           this.scrollToBottom();
+          return false;
+        };
+      }
+
+      // Status text click handler for version popup
+      const statusText = document.querySelector('.status-text');
+      if (statusText) {
+        statusText.onclick = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.statusClickCount++;
+          console.log('Status clicked, count:', this.statusClickCount);
+          if (this.statusClickCount >= 7) {
+            this.showVersionPopup();
+            this.statusClickCount = 0; // Reset counter
+          }
           return false;
         };
       }
@@ -1809,6 +1826,17 @@ class DeepSeekChat {
   showForwardPopup(text) {
     this.forwardText = text;
     document.getElementById('forward-popup').classList.add('show');
+  }
+
+  showVersionPopup() {
+    const versionPopup = document.getElementById('version-popup');
+    if (versionPopup) {
+      versionPopup.classList.add('show');
+      // Auto-hide after 3 seconds
+      setTimeout(() => {
+        versionPopup.classList.remove('show');
+      }, 3000);
+    }
   }
 
   // Функция для преобразования названий языков в классы Prism.js
