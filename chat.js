@@ -1829,13 +1829,19 @@ class DeepSeekChat {
   }
 
   showVersionPopup() {
+    console.log('showVersionPopup called');
     const versionPopup = document.getElementById('version-popup');
+    console.log('versionPopup element:', versionPopup);
     if (versionPopup) {
       versionPopup.classList.add('show');
+      console.log('Added show class to version popup');
       // Auto-hide after 3 seconds
       setTimeout(() => {
         versionPopup.classList.remove('show');
+        console.log('Removed show class from version popup');
       }, 3000);
+    } else {
+      console.error('Version popup element not found');
     }
   }
 
