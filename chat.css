@@ -433,7 +433,7 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(60px);
-  z-index: 1000;
+  z-index: 99;
 }
 
 .scroll-to-bottom-btn.visible {
