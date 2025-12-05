@@ -432,7 +432,7 @@
   transition: all 0.3s ease;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(10px);
+  transform: translateY(60px);
   z-index: 1000;
 }
 
@@ -778,7 +778,9 @@
     right: 20px;
     width: 44px;
     height: 44px;
-    opacity: 0.7;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(60px);
   }
 
   /* ФИКСИРОВАННЫЙ БЛОК ВВОДА С ФОНОМ #1f1f1f */
@@ -895,7 +897,9 @@
     right: 15px;
     width: 40px;
     height: 40px;
-    opacity: 0.7;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(60px);
   }
 }
 
