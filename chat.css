@@ -781,6 +781,7 @@
     opacity: 0;
     visibility: hidden;
     transform: translateY(60px);
+    z-index: 19;
   }
 
   /* ФИКСИРОВАННЫЙ БЛОК ВВОДА С ФОНОМ #1f1f1f */
@@ -900,6 +901,7 @@
     opacity: 0;
     visibility: hidden;
     transform: translateY(60px);
+    z-index: 19;
   }
 }
 
