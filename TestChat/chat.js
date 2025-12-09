@@ -1896,7 +1896,7 @@ class DeepSeekChat {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'deepseek/deepseek-chat',
+          model: 'huggingface/zephyr-7b-beta:free',
           messages: [
             {
               role: 'user',
@@ -1961,7 +1961,7 @@ class DeepSeekChat {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'deepseek/deepseek-chat',
+          model: 'huggingface/zephyr-7b-beta:free',
           messages: [
             {
               role: 'user',
