@@ -1888,6 +1888,7 @@ class DeepSeekChat {
     try {
       const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer sk-0eda9e06a9984d2f847d06ec56a7de05'
@@ -1917,6 +1918,7 @@ class DeepSeekChat {
 
       const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer sk-0eda9e06a9984d2f847d06ec56a7de05'
