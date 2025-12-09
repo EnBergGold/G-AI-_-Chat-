@@ -1885,7 +1885,9 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
+    console.log('Starting sendToWebhook with message:', message);
     try {
+      console.log('Making fetch request to DeepSeek API');
       const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
         mode: 'cors',
@@ -1898,12 +1900,16 @@ class DeepSeekChat {
           messages: [{ role: 'user', content: message }]
         })
       });
+      console.log('Fetch response received, status:', response.status, 'ok:', response.ok);
 
       if (!response.ok) {
-        throw new Error('Ошибка API: ' + response.status);
+        const errorText = await response.text();
+        console.error('API error response:', errorText);
+        throw new Error('Ошибка API: ' + response.status + ' ' + response.statusText);
       }
 
       const data = await response.json();
+      console.log('API response data:', data);
       return data.choices[0].message.content;
     } catch (error) {
       console.error('Ошибка отправки сообщения:', error);
