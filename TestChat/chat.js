@@ -1907,6 +1907,11 @@ class DeepSeekChat {
       return data.choices[0].message.content;
     } catch (error) {
       console.error('Ошибка отправки сообщения:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       return 'Извините, произошла ошибка при обработке сообщения. Попробуйте позже.';
     }
   }
@@ -1937,6 +1942,11 @@ class DeepSeekChat {
       return data.choices[0].message.content;
     } catch (error) {
       console.error('Ошибка отправки файлов:', error);
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       const fileNames = files.map(f => f.name).join(', ');
       return `Файлы "${fileNames}" получены, но произошла ошибка при обработке.`;
     }
