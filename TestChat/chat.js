@@ -1890,7 +1890,7 @@ class DeepSeekChat {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer sk-1234567890abcdef' // Замените на ваш реальный API ключ DeepSeek
+          'Authorization': 'Bearer sk-0eda9e06a9984d2f847d06ec56a7de05'
         },
         body: JSON.stringify({
           model: 'deepseek-chat',
@@ -1919,7 +1919,7 @@ class DeepSeekChat {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer sk-1234567890abcdef' // Замените на ваш реальный API ключ DeepSeek
+          'Authorization': 'Bearer sk-0eda9e06a9984d2f847d06ec56a7de05'
         },
         body: JSON.stringify({
           model: 'deepseek-chat',
