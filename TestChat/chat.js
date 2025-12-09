@@ -1885,7 +1885,8 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
-    // Отправка на Hugging Face Inference API (бесплатный, без ключа)
+    // Отправка на Hugging Face Inference API (бесплатный)
+    console.log('sendToWebhook called with message:', message);
     try {
       const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
         method: 'POST',
@@ -1893,48 +1894,48 @@ class DeepSeekChat {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          inputs: {
-            past_user_inputs: [],
-            generated_responses: [],
-            text: message
-          },
+          inputs: message,
           parameters: {
             max_length: 100,
-            temperature: 0.7
+            temperature: 0.7,
+            do_sample: true
           }
         })
       });
 
+      console.log('Response status:', response.status);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('API error:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, ${errorText}`);
       }
 
       const data = await response.json();
-      if (data.generated_text) {
-        return data.generated_text;
-      } else if (data[0] && data[0].generated_text) {
+      console.log('API response:', data);
+      if (data && data[0] && data[0].generated_text) {
         return data[0].generated_text;
       } else {
-        return 'Получен ответ от AI, но формат неожиданный.';
+        return 'Получен ответ от AI, но формат неожиданный: ' + JSON.stringify(data);
       }
     } catch (error) {
       console.error('Ошибка отправки на Hugging Face:', error);
-      return 'Извините, произошла ошибка при обработке запроса. Пожалуйста, попробуйте еще раз.';
+      return `Ошибка: ${error.message}. Возможно, CORS или модель не доступна.`;
     }
   }
 
   async sendFileToWebhook(files) {
+    console.log('sendFileToWebhook called with files:', files.map(f => f.name));
     try {
       const imageFiles = files.filter(f => f.type.startsWith('image/'));
       const otherFiles = files.filter(f => !f.type.startsWith('image/'));
 
       let response = '';
 
-      // Обработка изображений через Hugging Face BLIP модель
       if (imageFiles.length > 0) {
         for (const file of imageFiles) {
           try {
             const base64 = await this.fileToBase64(file);
+            console.log('Sending image to BLIP model');
             const visionResponse = await fetch('https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base', {
               method: 'POST',
               headers: {
@@ -1945,33 +1946,35 @@ class DeepSeekChat {
               })
             });
 
+            console.log('Vision response status:', visionResponse.status);
             if (visionResponse.ok) {
               const data = await visionResponse.json();
+              console.log('Vision data:', data);
               if (data && data[0] && data[0].generated_text) {
                 response += `Изображение ${file.name}: ${data[0].generated_text}\n`;
               } else {
-                response += `Не удалось получить описание для ${file.name}\n`;
+                response += `Не удалось описать ${file.name}: ${JSON.stringify(data)}\n`;
               }
             } else {
-              response += `Ошибка обработки изображения ${file.name}\n`;
+              const errorText = await visionResponse.text();
+              response += `Ошибка обработки ${file.name}: ${visionResponse.status} ${errorText}\n`;
             }
           } catch (err) {
             console.error('Ошибка обработки изображения:', err);
-            response += `Не удалось обработать изображение ${file.name}\n`;
+            response += `Не удалось обработать ${file.name}: ${err.message}\n`;
           }
         }
       }
 
-      // Для других файлов - просто сообщение
       if (otherFiles.length > 0) {
         const fileNames = otherFiles.map(f => f.name).join(', ');
-        response += `Файлы "${fileNames}" получены, но анализ не поддерживается для этого типа файлов.\n`;
+        response += `Файлы "${fileNames}" получены.\n`;
       }
 
       return response || 'Файлы обработаны.';
     } catch (error) {
       console.error('Ошибка обработки файлов:', error);
-      return 'Извините, произошла ошибка при обработке файлов. Пожалуйста, попробуйте еще раз.';
+      return `Ошибка обработки файлов: ${error.message}`;
     }
   }
 
