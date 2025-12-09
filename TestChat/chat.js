@@ -1885,16 +1885,103 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
-    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
-    // В реальной реализации здесь будет код для отправки на ваш вебхук
-    return 'Это тестовый ответ на ваше сообщение: "' + message + '"';
+    // Отправка на Hugging Face Inference API (бесплатный, без ключа)
+    try {
+      const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          inputs: {
+            past_user_inputs: [],
+            generated_responses: [],
+            text: message
+          },
+          parameters: {
+            max_length: 100,
+            temperature: 0.7
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.generated_text) {
+        return data.generated_text;
+      } else if (data[0] && data[0].generated_text) {
+        return data[0].generated_text;
+      } else {
+        return 'Получен ответ от AI, но формат неожиданный.';
+      }
+    } catch (error) {
+      console.error('Ошибка отправки на Hugging Face:', error);
+      return 'Извините, произошла ошибка при обработке запроса. Пожалуйста, попробуйте еще раз.';
+    }
   }
 
   async sendFileToWebhook(files) {
-    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
-    // В реальной реализации здесь будет код для отправки на ваш вебхук
-    const fileNames = files.map(f => f.name).join(', ');
-    return `Файлы "${fileNames}" успешно обработаны!`;
+    try {
+      const imageFiles = files.filter(f => f.type.startsWith('image/'));
+      const otherFiles = files.filter(f => !f.type.startsWith('image/'));
+
+      let response = '';
+
+      // Обработка изображений через Hugging Face BLIP модель
+      if (imageFiles.length > 0) {
+        for (const file of imageFiles) {
+          try {
+            const base64 = await this.fileToBase64(file);
+            const visionResponse = await fetch('https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                inputs: base64
+              })
+            });
+
+            if (visionResponse.ok) {
+              const data = await visionResponse.json();
+              if (data && data[0] && data[0].generated_text) {
+                response += `Изображение ${file.name}: ${data[0].generated_text}\n`;
+              } else {
+                response += `Не удалось получить описание для ${file.name}\n`;
+              }
+            } else {
+              response += `Ошибка обработки изображения ${file.name}\n`;
+            }
+          } catch (err) {
+            console.error('Ошибка обработки изображения:', err);
+            response += `Не удалось обработать изображение ${file.name}\n`;
+          }
+        }
+      }
+
+      // Для других файлов - просто сообщение
+      if (otherFiles.length > 0) {
+        const fileNames = otherFiles.map(f => f.name).join(', ');
+        response += `Файлы "${fileNames}" получены, но анализ не поддерживается для этого типа файлов.\n`;
+      }
+
+      return response || 'Файлы обработаны.';
+    } catch (error) {
+      console.error('Ошибка обработки файлов:', error);
+      return 'Извините, произошла ошибка при обработке файлов. Пожалуйста, попробуйте еще раз.';
+    }
+  }
+
+  fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
   async sendMessage() {
