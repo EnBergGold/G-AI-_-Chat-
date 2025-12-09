@@ -1885,106 +1885,16 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
-    // Отправка на Hugging Face Inference API (бесплатный)
-    console.log('sendToWebhook called with message:', message);
-    try {
-      const response = await fetch('https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          inputs: message,
-          parameters: {
-            max_length: 100,
-            temperature: 0.7,
-            do_sample: true
-          }
-        })
-      });
-
-      console.log('Response status:', response.status);
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API error:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}, ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('API response:', data);
-      if (data && data[0] && data[0].generated_text) {
-        return data[0].generated_text;
-      } else {
-        return 'Получен ответ от AI, но формат неожиданный: ' + JSON.stringify(data);
-      }
-    } catch (error) {
-      console.error('Ошибка отправки на Hugging Face:', error);
-      return `Ошибка: ${error.message}. Возможно, CORS или модель не доступна.`;
-    }
+    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
+    // В реальной реализации здесь будет код для отправки на ваш вебхук
+    return 'Это тестовый ответ на ваше сообщение: "' + message + '"';
   }
 
   async sendFileToWebhook(files) {
-    console.log('sendFileToWebhook called with files:', files.map(f => f.name));
-    try {
-      const imageFiles = files.filter(f => f.type.startsWith('image/'));
-      const otherFiles = files.filter(f => !f.type.startsWith('image/'));
-
-      let response = '';
-
-      if (imageFiles.length > 0) {
-        for (const file of imageFiles) {
-          try {
-            const base64 = await this.fileToBase64(file);
-            console.log('Sending image to BLIP model');
-            const visionResponse = await fetch('https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                inputs: base64
-              })
-            });
-
-            console.log('Vision response status:', visionResponse.status);
-            if (visionResponse.ok) {
-              const data = await visionResponse.json();
-              console.log('Vision data:', data);
-              if (data && data[0] && data[0].generated_text) {
-                response += `Изображение ${file.name}: ${data[0].generated_text}\n`;
-              } else {
-                response += `Не удалось описать ${file.name}: ${JSON.stringify(data)}\n`;
-              }
-            } else {
-              const errorText = await visionResponse.text();
-              response += `Ошибка обработки ${file.name}: ${visionResponse.status} ${errorText}\n`;
-            }
-          } catch (err) {
-            console.error('Ошибка обработки изображения:', err);
-            response += `Не удалось обработать ${file.name}: ${err.message}\n`;
-          }
-        }
-      }
-
-      if (otherFiles.length > 0) {
-        const fileNames = otherFiles.map(f => f.name).join(', ');
-        response += `Файлы "${fileNames}" получены.\n`;
-      }
-
-      return response || 'Файлы обработаны.';
-    } catch (error) {
-      console.error('Ошибка обработки файлов:', error);
-      return `Ошибка обработки файлов: ${error.message}`;
-    }
-  }
-
-  fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
+    // В реальной реализации здесь будет код для отправки на ваш вебхук
+    const fileNames = files.map(f => f.name).join(', ');
+    return `Файлы "${fileNames}" успешно обработаны!`;
   }
 
   async sendMessage() {
