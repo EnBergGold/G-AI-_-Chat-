@@ -1885,16 +1885,59 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
-    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
-    // В реальной реализации здесь будет код для отправки на ваш вебхук
-    return 'Это тестовый ответ на ваше сообщение: "' + message + '"';
+    try {
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer sk-1234567890abcdef' // Замените на ваш реальный API ключ DeepSeek
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [{ role: 'user', content: message }]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка API: ' + response.status);
+      }
+
+      const data = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('Ошибка отправки сообщения:', error);
+      return 'Извините, произошла ошибка при обработке сообщения. Попробуйте позже.';
+    }
   }
 
   async sendFileToWebhook(files) {
-    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
-    // В реальной реализации здесь будет код для отправки на ваш вебхук
-    const fileNames = files.map(f => f.name).join(', ');
-    return `Файлы "${fileNames}" успешно обработаны!`;
+    try {
+      const fileDescriptions = files.map(f => `${f.name} (${f.type}, ${f.size} bytes)`).join('; ');
+      const message = `Пользователь отправил файлы: ${fileDescriptions}. Пожалуйста, опишите, что вы можете сделать с этими файлами.`;
+
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer sk-1234567890abcdef' // Замените на ваш реальный API ключ DeepSeek
+        },
+        body: JSON.stringify({
+          model: 'deepseek-chat',
+          messages: [{ role: 'user', content: message }]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Ошибка API: ' + response.status);
+      }
+
+      const data = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error('Ошибка отправки файлов:', error);
+      const fileNames = files.map(f => f.name).join(', ');
+      return `Файлы "${fileNames}" получены, но произошла ошибка при обработке.`;
+    }
   }
 
   async sendMessage() {
