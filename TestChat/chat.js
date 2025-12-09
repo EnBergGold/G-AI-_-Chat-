@@ -1885,77 +1885,16 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
-    console.log('Starting sendToWebhook with message:', message);
-    try {
-      console.log('Making fetch request to DeepSeek API');
-      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer sk-0eda9e06a9984d2f847d06ec56a7de05'
-        },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: [{ role: 'user', content: message }]
-        })
-      });
-      console.log('Fetch response received, status:', response.status, 'ok:', response.ok);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API error response:', errorText);
-        throw new Error('Ошибка API: ' + response.status + ' ' + response.statusText);
-      }
-
-      const data = await response.json();
-      console.log('API response data:', data);
-      return data.choices[0].message.content;
-    } catch (error) {
-      console.error('Ошибка отправки сообщения:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
-      return 'Извините, произошла ошибка при обработке сообщения. Попробуйте позже.';
-    }
+    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
+    // В реальной реализации здесь будет код для отправки на ваш вебхук
+    return 'Это тестовый ответ на ваше сообщение: "' + message + '"';
   }
 
   async sendFileToWebhook(files) {
-    try {
-      const fileDescriptions = files.map(f => `${f.name} (${f.type}, ${f.size} bytes)`).join('; ');
-      const message = `Пользователь отправил файлы: ${fileDescriptions}. Пожалуйста, опишите, что вы можете сделать с этими файлами.`;
-
-      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer sk-0eda9e06a9984d2f847d06ec56a7de05'
-        },
-        body: JSON.stringify({
-          model: 'deepseek-chat',
-          messages: [{ role: 'user', content: message }]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Ошибка API: ' + response.status);
-      }
-
-      const data = await response.json();
-      return data.choices[0].message.content;
-    } catch (error) {
-      console.error('Ошибка отправки файлов:', error);
-      console.error('Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
-      const fileNames = files.map(f => f.name).join(', ');
-      return `Файлы "${fileNames}" получены, но произошла ошибка при обработке.`;
-    }
+    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
+    // В реальной реализации здесь будет код для отправки на ваш вебхук
+    const fileNames = files.map(f => f.name).join(', ');
+    return `Файлы "${fileNames}" успешно обработаны!`;
   }
 
   async sendMessage() {
