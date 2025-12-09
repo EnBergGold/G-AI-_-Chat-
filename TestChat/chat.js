@@ -1885,124 +1885,16 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
-    try {
-      console.log('Sending message to OpenRouter:', message);
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer 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',
-          'HTTP-Referer': 'https://goldenberg-technologies.pro',
-          'X-Title': 'G•AI® Chat',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'huggingface/zephyr-7b-beta:free',
-          messages: [
-            {
-              role: 'user',
-              content: message
-            }
-          ]
-        })
-      });
-
-      console.log('Response status:', response.status);
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('API error response:', errorText);
-        throw new Error('API request failed: ' + response.status + ' ' + errorText);
-      }
-
-      const data = await response.json();
-      console.log('API response data:', data);
-      return data.choices[0].message.content;
-    } catch (error) {
-      console.error('Error sending to webhook:', error);
-      return 'Извините, произошла ошибка при обработке запроса. Пожалуйста, попробуйте еще раз.';
-    }
+    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
+    // В реальной реализации здесь будет код для отправки на ваш вебхук
+    return 'Это тестовый ответ на ваше сообщение: "' + message + '"';
   }
 
   async sendFileToWebhook(files) {
-    try {
-      let message = 'Пользователь отправил файлы:\n';
-
-      for (const file of files) {
-        message += `\nФайл: ${file.name}, тип: ${file.type}, размер: ${file.size} байт\n`;
-
-        // Для текстовых файлов пытаемся прочитать содержимое
-        if (file.type.startsWith('text/') || file.type === 'application/json' || file.type === 'application/xml' || file.name.endsWith('.txt') || file.name.endsWith('.json') || file.name.endsWith('.xml') || file.name.endsWith('.csv')) {
-          try {
-            const content = await this.readFileContent(file);
-            message += `Содержимое:\n${content}\n`;
-          } catch (e) {
-            message += `Не удалось прочитать содержимое файла.\n`;
-          }
-        } else if (file.type.startsWith('image/')) {
-          // Для изображений отправляем base64
-          try {
-            const base64 = await this.getFileAsBase64(file);
-            message += `Изображение в base64: data:${file.type};base64,${base64}\n`;
-          } catch (e) {
-            message += `Не удалось обработать изображение.\n`;
-          }
-        } else {
-          message += `Файл не является текстовым или изображением, содержимое не отправлено.\n`;
-        }
-      }
-
-      message += '\nПожалуйста, проанализируйте эти файлы и дайте ответ.';
-
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer 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',
-          'HTTP-Referer': 'https://goldenberg-technologies.pro',
-          'X-Title': 'G•AI® Chat',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'huggingface/zephyr-7b-beta:free',
-          messages: [
-            {
-              role: 'user',
-              content: message
-            }
-          ]
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('API request failed: ' + response.status);
-      }
-
-      const data = await response.json();
-      return data.choices[0].message.content;
-    } catch (error) {
-      console.error('Error sending files to webhook:', error);
-      const fileNames = files.map(f => f.name).join(', ');
-      return `Файлы "${fileNames}" получены, но произошла ошибка при обработке.`;
-    }
-  }
-
-  readFileContent(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target.result);
-      reader.onerror = reject;
-      reader.readAsText(file);
-    });
-  }
-
-  getFileAsBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const base64 = e.target.result.split(',')[1];
-        resolve(base64);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
+    // В реальной реализации здесь будет код для отправки на ваш вебхук
+    const fileNames = files.map(f => f.name).join(', ');
+    return `Файлы "${fileNames}" успешно обработаны!`;
   }
 
   async sendMessage() {
