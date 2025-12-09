@@ -1886,6 +1886,7 @@ class DeepSeekChat {
 
   async sendToWebhook(message) {
     try {
+      console.log('Sending message to OpenRouter:', message);
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -1905,11 +1906,15 @@ class DeepSeekChat {
         })
       });
 
+      console.log('Response status:', response.status);
       if (!response.ok) {
-        throw new Error('API request failed: ' + response.status);
+        const errorText = await response.text();
+        console.error('API error response:', errorText);
+        throw new Error('API request failed: ' + response.status + ' ' + errorText);
       }
 
       const data = await response.json();
+      console.log('API response data:', data);
       return data.choices[0].message.content;
     } catch (error) {
       console.error('Error sending to webhook:', error);
