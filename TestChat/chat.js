@@ -1936,7 +1936,10 @@ class DeepSeekChat {
   }
 
   async sendMessage() {
-    console.log('sendMessage called');
+    console.log('sendMessage called, isMobile:', this.isMobile);
+    if (this.isMobile) {
+      alert('sendMessage called on mobile, message: ' + messageInput.value.trim());
+    }
 
     const messageInput = document.getElementById('message-input');
     const message = messageInput.value.trim();
