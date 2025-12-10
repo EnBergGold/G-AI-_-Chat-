@@ -1885,16 +1885,46 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
-    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
-    // В реальной реализации здесь будет код для отправки на ваш вебхук
-    return 'Это тестовый ответ на ваше сообщение: "' + message + '"';
+    const webhookUrl = 'https://6204029-bx992105.twc1.net/webhook-test/G-AI_chat_test_webhook';
+    try {
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+      if (!response.ok) {
+        throw new Error('Webhook request failed');
+      }
+      return await response.text();
+    } catch (error) {
+      console.error('Error sending to webhook:', error);
+      return 'Извините, произошла ошибка при отправке сообщения.';
+    }
   }
 
   async sendFileToWebhook(files) {
-    // Для тестирования возвращаем фиктивный ответ вместо отправки на вебхук
-    // В реальной реализации здесь будет код для отправки на ваш вебхук
-    const fileNames = files.map(f => f.name).join(', ');
-    return `Файлы "${fileNames}" успешно обработаны!`;
+    const webhookUrl = 'https://6204029-bx992105.twc1.net/webhook-test/G-AI_chat_test_webhook';
+    try {
+      const formData = new FormData();
+      files.forEach((file, index) => {
+        formData.append(`file${index}`, file);
+      });
+
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error('Webhook request failed');
+      }
+      return await response.text();
+    } catch (error) {
+      console.error('Error sending files to webhook:', error);
+      const fileNames = files.map(f => f.name).join(', ');
+      return `Ошибка при обработке файлов "${fileNames}".`;
+    }
   }
 
   async sendMessage() {
