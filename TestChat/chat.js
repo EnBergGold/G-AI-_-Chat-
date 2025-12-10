@@ -890,26 +890,19 @@ class DeepSeekChat {
   }
 
   escapeHtml(text) {
-    // Сначала парсим markdown
-    let html = this.parseMarkdown(text);
-
-    // Затем экранируем HTML
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return div.textContent;
+    // Парсим markdown и возвращаем HTML
+    return this.parseMarkdown(text);
   }
 
   parseMarkdown(text) {
-    // Экранируем HTML символы сначала
-    text = text.replace(/&/g, '&')
-               .replace(/</g, '<')
-               .replace(/>/g, '>');
+    // Экранируем опасные символы, но оставляем наши HTML теги
+    text = text.replace(/&/g, '&');
 
     // Жирный текст **text**
     text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    // Курсив *text*
-    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    // Курсив *text* (но не внутри **)
+    text = text.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '<em>$1</em>');
 
     // Inline code `text`
     text = text.replace(/`([^`]+)`/g, '<code>$1</code>');

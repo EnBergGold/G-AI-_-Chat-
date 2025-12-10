@@ -427,7 +427,7 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
-  white-space: normal;
+  white-space: pre-wrap;
   overflow: hidden;
   margin: 0;
   padding: 0;
