@@ -1904,6 +1904,9 @@ class DeepSeekChat {
       return text;
     } catch (error) {
       console.error('Error sending to webhook:', error);
+      if (this.isMobile) {
+        alert('Error: ' + error.message);
+      }
       return 'Извините, произошла ошибка при отправке сообщения.';
     }
   }
@@ -1930,6 +1933,9 @@ class DeepSeekChat {
       return text;
     } catch (error) {
       console.error('Error sending files to webhook:', error);
+      if (this.isMobile) {
+        alert('File error: ' + error.message);
+      }
       const fileNames = files.map(f => f.name).join(', ');
       return `Ошибка при обработке файлов "${fileNames}".`;
     }
