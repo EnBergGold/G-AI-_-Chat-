@@ -697,11 +697,13 @@ class DeepSeekChat {
     const codeDetection = this.detectCode(text);
     const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     
+    const contentClass = fileDetection.isFile ? 'file-message-content' : 'text-message-content';
+
     messageDiv.innerHTML = `
       <div class="${avatarClass}">
         ${avatarContent}
       </div>
-      <div class="message-content">
+      <div class="message-content ${contentClass}">
         ${fileDetection.isFile ? `
           <div class="file-header">
             <div class="file-info">
