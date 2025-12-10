@@ -1034,6 +1034,7 @@ class DeepSeekChat {
   }
 
   detectCode(text) {
+    console.log('detectCode called, text length:', text.length);
     // Проверяем, есть ли признаки кода в тексте
     const hasCodeCharacteristics = (
       (text.includes('{') && text.includes('}')) ||
@@ -1045,6 +1046,7 @@ class DeepSeekChat {
       text.includes('function ') || // JS functions
       text.includes('const ') || text.includes('let ') || text.includes('var ') // JS variables
     );
+    console.log('hasCodeCharacteristics:', hasCodeCharacteristics);
     
     // Если нет явных признаков кода, проверяем URL
     if (!hasCodeCharacteristics) {
