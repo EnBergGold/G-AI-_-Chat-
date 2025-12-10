@@ -246,6 +246,7 @@
 /* Text message content - no height limit */
 .text-message-content {
   max-height: none;
+  padding: 0;
 }
 
 /* Код блок стили */
