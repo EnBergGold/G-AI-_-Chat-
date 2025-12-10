@@ -1035,6 +1035,14 @@ class DeepSeekChat {
 
   detectCode(text) {
     console.log('detectCode called, text length:', text.length);
+
+    // Не распознавать как код, если текст содержит markdown или списки
+    const hasMarkdown = text.includes('###') || text.includes('—') || text.includes('•') || text.includes('**') || text.includes('📚') || text.includes('✍️') || text.includes('💡') || text.includes('🛠') || text.includes('⚙️') || text.includes('🌟') || text.includes('•');
+    if (hasMarkdown) {
+      console.log('Text has markdown, returning isCode: false');
+      return { isCode: false };
+    }
+
     // Проверяем, есть ли признаки кода в тексте
     const hasCodeCharacteristics = (
       (text.includes('{') && text.includes('}')) ||
@@ -1353,11 +1361,7 @@ class DeepSeekChat {
     const hasCodeKeywords = /\b(def|class|function|import|export|const|let|var|for|while|if|try|catch)\b/.test(text);
     const hasCodeStructures = text.includes('=') || (text.includes('{') && text.includes('}')) || (text.includes('(') && text.includes(')'));
 
-    // Не распознавать как код, если текст содержит markdown или списки
-    const hasMarkdown = text.includes('###') || text.includes('—') || text.includes('•') || text.includes('**') || text.includes('📚') || text.includes('✍️') || text.includes('💡') || text.includes('🛠') || text.includes('⚙️') || text.includes('🌟');
-    console.log('hasMarkdown:', hasMarkdown);
-
-    if (hasCodeCharacteristics && text.length > 50 && !hasMarkdown) {
+    if (hasCodeCharacteristics && text.length > 50) {
       console.log('Returning isCode: true');
       return { isCode: true, language: 'CODE' };
     }
