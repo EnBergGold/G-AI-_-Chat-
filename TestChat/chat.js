@@ -762,7 +762,7 @@ class DeepSeekChat {
           </div>
         ` : `
           <div class="message-text">
-            <div>${this.escapeHtml(text)}</div>
+            ${this.parseMarkdown(text)}
           </div>
         `}
         <div class="message-time">${timestamp}</div>
