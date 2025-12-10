@@ -1306,6 +1306,14 @@ class DeepSeekChat {
       return { isCode: false };
     }
 
+    // Проверяем на наличие ключевых слов кода или структур
+    const hasCodeKeywords = /\b(def|class|function|import|export|const|let|var|for|while|if|try|catch)\b/.test(text);
+    const hasCodeStructures = text.includes('=') || (text.includes('{') && text.includes('}')) || (text.includes('(') && text.includes(')'));
+
+    if (hasCodeCharacteristics && text.length > 50 && (hasCodeKeywords || hasCodeStructures)) {
+      return { isCode: true, language: 'CODE' };
+    }
+
     return { isCode: false, language: null };
   }
 
