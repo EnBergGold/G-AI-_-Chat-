@@ -1939,7 +1939,7 @@ class DeepSeekChat {
   }
 
   async sendToWebhook(message) {
-    const webhookUrl = 'https://6204029-bx992105.twc1.net/webhook-test/G-AI_chat_test_webhook';
+    const webhookUrl = 'https://6204029-bx992105.twc1.net/webhook/G-AI_chat_test_webhook';
     console.log('Sending message to webhook:', message);
     try {
       const response = await fetch(webhookUrl, {
@@ -1963,7 +1963,7 @@ class DeepSeekChat {
   }
 
   async sendFileToWebhook(files) {
-    const webhookUrl = 'https://6204029-bx992105.twc1.net/webhook-test/G-AI_chat_test_webhook';
+    const webhookUrl = 'https://6204029-bx992105.twc1.net/webhook/G-AI_chat_test_webhook';
     console.log('Sending files to webhook:', files.map(f => f.name));
     try {
       const formData = new FormData();
