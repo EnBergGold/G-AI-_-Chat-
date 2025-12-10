@@ -697,13 +697,11 @@ class DeepSeekChat {
     const codeDetection = this.detectCode(text);
     const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     
-    const contentClass = fileDetection.isFile ? 'file-message-content' : 'text-message-content';
-
     messageDiv.innerHTML = `
       <div class="${avatarClass}">
         ${avatarContent}
       </div>
-      <div class="message-content ${contentClass}">
+      <div class="message-content">
         ${fileDetection.isFile ? `
           <div class="file-header">
             <div class="file-info">
@@ -762,7 +760,7 @@ class DeepSeekChat {
           </div>
         ` : `
           <div class="message-text">
-            ${this.parseMarkdown(text)}
+            <div>${this.escapeHtml(text)}</div>
           </div>
         `}
         <div class="message-time">${timestamp}</div>
@@ -920,6 +918,9 @@ class DeepSeekChat {
     // Списки - item
     text = text.replace(/^— (.*$)/gm, '<li>$1</li>');
     text = text.replace(/^• (.*$)/gm, '<li>$1</li>');
+
+    // Заменяем символы новой строки на <br>, но не внутри списков
+    text = text.replace(/\n/g, '<br>');
 
     // Оборачиваем списки в <ul> если есть <li>
     if (text.includes('<li>')) {
