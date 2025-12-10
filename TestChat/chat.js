@@ -1886,6 +1886,7 @@ class DeepSeekChat {
 
   async sendToWebhook(message) {
     const webhookUrl = 'https://6204029-bx992105.twc1.net/webhook-test/G-AI_chat_test_webhook';
+    console.log('Sending message to webhook:', message);
     try {
       const response = await fetch(webhookUrl, {
         method: 'POST',
@@ -1894,10 +1895,13 @@ class DeepSeekChat {
         },
         body: JSON.stringify({ message }),
       });
+      console.log('Webhook response status:', response.status);
       if (!response.ok) {
         throw new Error('Webhook request failed');
       }
-      return await response.text();
+      const text = await response.text();
+      console.log('Webhook response text:', text);
+      return text;
     } catch (error) {
       console.error('Error sending to webhook:', error);
       return 'Извините, произошла ошибка при отправке сообщения.';
@@ -1906,6 +1910,7 @@ class DeepSeekChat {
 
   async sendFileToWebhook(files) {
     const webhookUrl = 'https://6204029-bx992105.twc1.net/webhook-test/G-AI_chat_test_webhook';
+    console.log('Sending files to webhook:', files.map(f => f.name));
     try {
       const formData = new FormData();
       files.forEach((file, index) => {
@@ -1916,10 +1921,13 @@ class DeepSeekChat {
         method: 'POST',
         body: formData,
       });
+      console.log('Webhook response status for files:', response.status);
       if (!response.ok) {
         throw new Error('Webhook request failed');
       }
-      return await response.text();
+      const text = await response.text();
+      console.log('Webhook response text for files:', text);
+      return text;
     } catch (error) {
       console.error('Error sending files to webhook:', error);
       const fileNames = files.map(f => f.name).join(', ');
