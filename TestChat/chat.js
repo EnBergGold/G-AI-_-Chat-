@@ -696,12 +696,7 @@ class DeepSeekChat {
     // Определяем, содержит ли сообщение код (приоритет кода над URL)
     const codeDetection = this.detectCode(text);
     const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-
-    // Добавляем класс для кодовых сообщений
-    if (codeDetection.isCode) {
-      messageDiv.classList.add('code-message');
-    }
-
+    
     messageDiv.innerHTML = `
       <div class="${avatarClass}">
         ${avatarContent}
