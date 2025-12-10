@@ -1354,10 +1354,10 @@ class DeepSeekChat {
     const hasCodeStructures = text.includes('=') || (text.includes('{') && text.includes('}')) || (text.includes('(') && text.includes(')'));
 
     // Не распознавать как код, если текст содержит markdown или списки
-    const hasMarkdown = text.includes('###') || text.includes('—') || text.includes('•') || text.includes('**');
-    console.log('hasMarkdown:', hasMarkdown, 'hasCodeKeywords:', hasCodeKeywords, 'hasCodeStructures:', hasCodeStructures);
+    const hasMarkdown = text.includes('###') || text.includes('—') || text.includes('•') || text.includes('**') || text.includes('📚') || text.includes('✍️') || text.includes('💡') || text.includes('🛠') || text.includes('⚙️') || text.includes('🌟');
+    console.log('hasMarkdown:', hasMarkdown);
 
-    if (hasCodeCharacteristics && text.length > 50 && (hasCodeKeywords || hasCodeStructures) && !hasMarkdown) {
+    if (hasCodeCharacteristics && text.length > 50 && !hasMarkdown) {
       console.log('Returning isCode: true');
       return { isCode: true, language: 'CODE' };
     }
