@@ -890,10 +890,51 @@ class DeepSeekChat {
   }
 
   escapeHtml(text) {
+    // Сначала парсим markdown
+    let html = this.parseMarkdown(text);
+
+    // Затем экранируем HTML
     const div = document.createElement('div');
-    div.textContent = text;
-    // Заменяем символы новой строки на <br> теги
-    return div.innerHTML.replace(/\n/g, '<br>');
+    div.innerHTML = html;
+    return div.textContent;
+  }
+
+  parseMarkdown(text) {
+    // Экранируем HTML символы сначала
+    text = text.replace(/&/g, '&')
+               .replace(/</g, '<')
+               .replace(/>/g, '>');
+
+    // Жирный текст **text**
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // Курсив *text*
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+    // Inline code `text`
+    text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // Заголовки # ## ###
+    text = text.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+    text = text.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+    text = text.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+    // Ссылки [text](url)
+    text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+    // Списки - item
+    text = text.replace(/^— (.*$)/gm, '<li>$1</li>');
+    text = text.replace(/^• (.*$)/gm, '<li>$1</li>');
+
+    // Заменяем символы новой строки на <br>, но не внутри списков
+    text = text.replace(/\n/g, '<br>');
+
+    // Оборачиваем списки в <ul> если есть <li>
+    if (text.includes('<li>')) {
+      text = '<ul>' + text.replace(/(<li>.*?<\/li>)/g, '$1') + '</ul>';
+    }
+
+    return text;
   }
 
 
@@ -1310,7 +1351,10 @@ class DeepSeekChat {
     const hasCodeKeywords = /\b(def|class|function|import|export|const|let|var|for|while|if|try|catch)\b/.test(text);
     const hasCodeStructures = text.includes('=') || (text.includes('{') && text.includes('}')) || (text.includes('(') && text.includes(')'));
 
-    if (hasCodeCharacteristics && text.length > 50 && (hasCodeKeywords || hasCodeStructures)) {
+    // Не распознавать как код, если текст содержит markdown или списки
+    const hasMarkdown = text.includes('###') || text.includes('—') || text.includes('•') || text.includes('**');
+
+    if (hasCodeCharacteristics && text.length > 50 && (hasCodeKeywords || hasCodeStructures) && !hasMarkdown) {
       return { isCode: true, language: 'CODE' };
     }
 
